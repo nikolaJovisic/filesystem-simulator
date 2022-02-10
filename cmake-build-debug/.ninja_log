@@ -1,0 +1,15 @@
+# ninja log v5
+5	863	6662062061368036	CMakeFiles/filesystem_simulator.dir/main.cpp.obj	87059060c46afa66
+864	958	6662062062275624	filesystem_simulator.exe	afa365e19a4bc9e7
+5	989	6662057596049709	CMakeFiles/filesystem_simulator.dir/PersistentStorage.cpp.obj	15011fe42e3293ec
+1	167	6662064413226745	build.ninja	86911b73dd70b06
+4	761	6662064421195420	CMakeFiles/filesystem_simulator.dir/PersistentStorage.cpp.obj	15011fe42e3293ec
+762	868	6662064422222690	filesystem_simulator.exe	afa365e19a4bc9e7
+5	912	6662065662252111	CMakeFiles/filesystem_simulator.dir/PersistentStorage.cpp.obj	15011fe42e3293ec
+912	1009	6662065663179630	filesystem_simulator.exe	afa365e19a4bc9e7
+6	1082	6662070152246338	CMakeFiles/filesystem_simulator.dir/main.cpp.obj	87059060c46afa66
+1083	1190	6662070153283574	filesystem_simulator.exe	afa365e19a4bc9e7
+5	778	6662072243482588	CMakeFiles/filesystem_simulator.dir/main.cpp.obj	87059060c46afa66
+779	885	6662072244510190	filesystem_simulator.exe	afa365e19a4bc9e7
+7	1081	6662072432155065	CMakeFiles/filesystem_simulator.dir/main.cpp.obj	87059060c46afa66
+1081	1218	6662072433451612	filesystem_simulator.exe	afa365e19a4bc9e7
