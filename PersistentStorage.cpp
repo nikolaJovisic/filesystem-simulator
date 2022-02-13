@@ -5,7 +5,12 @@
 #include "PersistentStorage.h"
 #include <iostream>
 #include <cstring>
-#include <exception>
+
+PersistentStorage::PersistentStorage() {
+    numberOfBlocks = 0;
+    bytesPerBlock = 0;
+    storage = nullptr;
+}
 
 PersistentStorage::PersistentStorage(unsigned int numberOfBlocks, unsigned int bytesPerBlock) {
     this->numberOfBlocks = numberOfBlocks;
@@ -13,16 +18,26 @@ PersistentStorage::PersistentStorage(unsigned int numberOfBlocks, unsigned int b
     storage = (char*) malloc(numberOfBlocks * bytesPerBlock);
 }
 
-void PersistentStorage::write(unsigned int blockNumber, char *src) {
-    if (blockNumber > numberOfBlocks) throw new std::invalid_argument("Block number greater than storage maximum!");
-    memcpy(storage + blockNumber * bytesPerBlock, src, bytesPerBlock);
+void PersistentStorage::write(unsigned int block, char *src) {
+    if (block > numberOfBlocks) throw std::invalid_argument("Block number greater than storage maximum!");
+    memcpy(storage + block * bytesPerBlock, src, bytesPerBlock);
 }
 
-void PersistentStorage::read(unsigned int blockNumber, char *dst) {
-    if (blockNumber > numberOfBlocks) throw new std::invalid_argument("Block number greater than storage maximum!");
-    memcpy(dst, storage + blockNumber * bytesPerBlock, bytesPerBlock);
+void PersistentStorage::read(unsigned int block, char *dst) {
+    if (block > numberOfBlocks) throw std::invalid_argument("Block number greater than storage maximum!");
+    memcpy(dst, storage + block * bytesPerBlock, bytesPerBlock);
 }
 
 PersistentStorage::~PersistentStorage() {
     free(storage);
 }
+
+unsigned int PersistentStorage::getNumberOfBlocks() const {
+    return numberOfBlocks;
+}
+
+unsigned int PersistentStorage::getBytesPerBlock() const {
+    return bytesPerBlock;
+}
+
+
