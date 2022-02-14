@@ -4,6 +4,43 @@
 
 #include "Directory.h"
 
+Directory::Directory() : content() {}
+
+Directory::Directory(char *src, unsigned length) : content() {
+    auto end = src + length;
+    while (src != end) {
+        unsigned filenameLength;
+        char* filename;
+        unsigned index;
+        filenameLength = *reinterpret_cast<unsigned *>(src);
+        src += sizeof(unsigned);
+        filename = reinterpret_cast<char *>(src);
+        src += filenameLength * sizeof(char);
+        index = *reinterpret_cast<unsigned *>(src);
+        src += sizeof(unsigned);
+        content.emplace(std::string(filename, filenameLength), index);
+    }
+}
+
+unsigned Directory::size() {
+    auto size = content.size() * (2 * sizeof(unsigned));
+    for(const auto& element: content) {
+        size += element.first.length() * sizeof(char);
+    }
+    return size;
+}
+
+unsigned Directory::serialize(char *dst) {
+    for(auto element: content) {
+        unsigned filenameLength = element.first.length();
+        unsigned index = element.second;
+        memcpy(dst, &filenameLength, sizeof(unsigned));
+        memcpy(dst += sizeof(unsigned), element.first.c_str(), sizeof(char) * filenameLength);
+        memcpy(dst += sizeof(char) * filenameLength, &index, sizeof(unsigned));
+        dst += sizeof(unsigned);
+    }
+}
+
 std::vector<std::string> Directory::getAllFilenames() {
     std::vector<std::string> filenames;
     for (auto const& element : content) {
@@ -24,6 +61,7 @@ void Directory::removeFile(std::string filename) {
     content.erase(filename);
 }
 
-Directory::Directory() {
-    content = std::map<std::string, unsigned>();
-}
+
+
+
+

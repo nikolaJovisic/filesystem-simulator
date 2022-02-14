@@ -10,14 +10,22 @@
 #include <vector>
 
 class Directory {
+    struct Element{
+        unsigned filenameLength;
+        char* filename;
+        unsigned index;
+    };
 private:
     std::map<std::string, unsigned> content;
 public:
     Directory();
+    Directory(char *src, unsigned length);
     std::vector<std::string> getAllFilenames();
     unsigned getIndex(std::string filename);
     void addFile(std::string filename, unsigned index); //overwrite default
     void removeFile(std::string filename);
+    unsigned size();
+    unsigned serialize(char *dst);
 };
 
 
