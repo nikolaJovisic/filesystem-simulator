@@ -12,12 +12,15 @@
 
 class FileManagementLayer {
 private:
-    PersistentStorage persistentStorage;
     std::map<unsigned, OpenedFileDescriptor> openedFiles;
+protected:
+    PersistentStorage persistentStorage;
 public:
     explicit FileManagementLayer(const PersistentStorage &persistentStorage);
     virtual unsigned open(std::string path) = 0;
     virtual bool close(unsigned index) = 0;
+    virtual void create(std::string path, bool isDirectory, unsigned length) = 0;
+    virtual bool remove(unsigned index) = 0;
     virtual bool read(unsigned index, char *dst, unsigned size) = 0;
     virtual bool write(unsigned index, char *src, unsigned size) = 0;
     virtual bool seek(unsigned index, unsigned position) = 0;
