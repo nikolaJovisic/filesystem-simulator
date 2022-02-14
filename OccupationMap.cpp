@@ -25,6 +25,7 @@ unsigned OccupationMap::occupy(unsigned int numberOfBlocks) {
             bestSpan = span;
         }
     }
+    if (bestSpan == -1) throw std::runtime_error("Out of memory.");
     auto retVal = bestCandidate->first;
     auto newFirst = (bestCandidate->first) + numberOfBlocks;
     auto newSecond = bestCandidate->second;
