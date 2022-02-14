@@ -36,7 +36,7 @@ unsigned int PersistentStorage::getNumberOfBlocks() const {
     return numberOfBlocks;
 }
 
-unsigned int PersistentStorage::getBytesPerBlock() const {
+unsigned int PersistentStorage::blockSize() const {
     return bytesPerBlock;
 }
 

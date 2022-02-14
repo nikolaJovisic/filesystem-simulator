@@ -21,7 +21,7 @@ public:
 
     [[nodiscard]] unsigned int getNumberOfBlocks() const;
 
-    [[nodiscard]] unsigned int getBytesPerBlock() const;
+    [[nodiscard]] unsigned int blockSize() const;
 };
 
 
