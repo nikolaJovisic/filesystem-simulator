@@ -10,15 +10,20 @@ class FileDescriptor {
 private:
     bool directory;
     unsigned startingBlock;
-    unsigned length;
+    unsigned blocksReserved;
+    unsigned usedSpace;
 public:
-    FileDescriptor(bool directory, unsigned startingBlock, unsigned length);
+    FileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace);
 
     [[nodiscard]] bool isDirectory() const;
 
     [[nodiscard]] unsigned int getStartingBlock() const;
 
-    [[nodiscard]] unsigned int getLength() const;
+    [[nodiscard]] unsigned int getBlocksReserved() const;
+
+    [[nodiscard]] unsigned int getUsedSpace() const;
+
+    void setUsedSpace(unsigned int usedSpace);
 };
 
 

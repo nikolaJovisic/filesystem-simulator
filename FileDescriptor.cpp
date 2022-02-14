@@ -4,9 +4,10 @@
 
 #include "FileDescriptor.h"
 
-FileDescriptor::FileDescriptor(bool directory, unsigned startingBlock, unsigned length) : directory(directory),
-                                                                               startingBlock(startingBlock),
-                                                                               length(length){}
+FileDescriptor::FileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace) : directory(directory),
+                                                                                                 startingBlock(startingBlock),
+                                                                                                 blocksReserved(blocksReserved),
+                                                                                                 usedSpace(usedSpace){}
 
 bool FileDescriptor::isDirectory() const {
     return directory;
@@ -16,7 +17,17 @@ unsigned int FileDescriptor::getStartingBlock() const {
     return startingBlock;
 }
 
-unsigned int FileDescriptor::getLength() const {
-    return length;
+unsigned int FileDescriptor::getBlocksReserved() const {
+    return blocksReserved;
 }
+
+unsigned int FileDescriptor::getUsedSpace() const {
+    return usedSpace;
+}
+
+void FileDescriptor::setUsedSpace(unsigned int usedSpace) {
+    FileDescriptor::usedSpace = usedSpace;
+}
+
+
 
