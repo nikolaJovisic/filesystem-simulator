@@ -5,27 +5,49 @@
 #ifndef FILESYSTEM_SIMULATOR_CONTINUOUSFILESYSTEM_H
 #define FILESYSTEM_SIMULATOR_CONTINUOUSFILESYSTEM_H
 
-#include <vector>
-#include "FileManagementLayer.h"
+#include "Filesystem.h"
 #include "OccupationMap.h"
-#include "DescriptorMemoryManager.h"
+#include "DescriptorManager.h"
+#include "Directory.h"
 
-class ContinuousFileSystem : FileManagementLayer {
+#include <deque>
+
+class ContinuousFilesystem : public Filesystem {
 private:
     OccupationMap occupationMap;
-    DescriptorMemoryManager descriptorMemoryManager;
+    DescriptorManager descriptorManager;
 public:
-    ContinuousFileSystem(const PersistentStorage &persistentStorage);
+    explicit ContinuousFilesystem(PersistentStorage &persistentStorage);
 
-    unsigned int open(std::string path) override;
+    int open(std::string path) override;
 
-    bool close(unsigned int index) override;
+    void close(unsigned int index) override;
 
-    bool read(unsigned int index, char *dst, unsigned int size) override;
+    void create(std::string path, bool isDirectory, unsigned blocksReserved) override;
 
-    bool write(unsigned int index, char *src, unsigned int size) override;
+    void read(unsigned int index, char *dst, unsigned int size) override;
 
-    bool seek(unsigned int index, unsigned int position) override;
+    void write(unsigned int index, char *src, unsigned int size) override;
+
+    void seek(unsigned int index, unsigned int position) override;
+
+    void remove(std::string path) override;
+
+    void listContentsAt(std::string path) override;
+
+    void printState() override;
+
+private:
+    Directory getDirectory(unsigned directoryIndex);
+
+    void addToDirectory(std::deque<std::string>& directories, std::string fileName, unsigned fileIndex);
+
+    void removeFromDirectory(std::deque<std::string> &directories, std::string fileName);
+
+    unsigned getLastDirectoryIndex(unsigned startingDirectoryIndex, std::deque<std::string> &directories);
+
+    void saveDirectory(Directory directory, unsigned directoryIndex);
+
 };
 
 
