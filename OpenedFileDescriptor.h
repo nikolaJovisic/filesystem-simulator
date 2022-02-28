@@ -5,13 +5,20 @@
 #ifndef FILESYSTEM_SIMULATOR_OPENEDFILEDESCRIPTOR_H
 #define FILESYSTEM_SIMULATOR_OPENEDFILEDESCRIPTOR_H
 
+#include <ostream>
 #include "FileDescriptor.h"
 
-class OpenedFileDescriptor : FileDescriptor {
+class OpenedFileDescriptor : public FileDescriptor {
 private:
     unsigned position;
 public:
-    OpenedFileDescriptor(FileDescriptor); // NOLINT(google-explicit-constructor)
+    explicit OpenedFileDescriptor(FileDescriptor);
+
+    [[nodiscard]] unsigned int getPosition() const;
+
+    void setPosition(unsigned int position);
+
+    friend std::ostream &operator<<(std::ostream &os, const OpenedFileDescriptor &descriptor);
 };
 
 

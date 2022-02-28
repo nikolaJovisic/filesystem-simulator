@@ -21,11 +21,11 @@ public:
     Directory();
     Directory(char *src, unsigned length);
     std::vector<std::string> getAllFilenames();
-    unsigned getIndex(std::string filename);
+    int getIndex(std::string filename);
     void addFile(std::string filename, unsigned index); //overwrite default
     void removeFile(std::string filename);
     unsigned size();
-    unsigned serialize(char *dst);
+    void serialize(char *dst);
 };
 
 

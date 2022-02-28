@@ -30,7 +30,7 @@ unsigned Directory::size() {
     return size;
 }
 
-unsigned Directory::serialize(char *dst) {
+void Directory::serialize(char *dst) {
     for(auto element: content) {
         unsigned filenameLength = element.first.length();
         unsigned index = element.second;
@@ -49,8 +49,10 @@ std::vector<std::string> Directory::getAllFilenames() {
     return filenames;
 }
 
-unsigned Directory::getIndex(std::string filename) {
-    return content[filename];
+int Directory::getIndex(std::string filename) {
+    auto it = content.find(filename);
+    if (it == content.end()) return -1;
+    return it->second;
 }
 
 void Directory::addFile(std::string filename, unsigned int index) {

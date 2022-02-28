@@ -6,6 +6,7 @@
 #define FILESYSTEM_SIMULATOR_PERSISTENTSTORAGE_H
 
 
+#include <ostream>
 
 class PersistentStorage {
 private:
@@ -22,6 +23,8 @@ public:
     [[nodiscard]] unsigned int getNumberOfBlocks() const;
 
     [[nodiscard]] unsigned int blockSize() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const PersistentStorage &storage);
 };
 
 

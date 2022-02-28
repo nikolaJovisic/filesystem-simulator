@@ -40,4 +40,10 @@ unsigned int PersistentStorage::blockSize() const {
     return bytesPerBlock;
 }
 
+std::ostream &operator<<(std::ostream &os, const PersistentStorage &storage) {
+    os << "numberOfBlocks: " << storage.numberOfBlocks << " bytesPerBlock: "
+       << storage.bytesPerBlock;
+    return os;
+}
+
 

@@ -7,7 +7,8 @@
 FileDescriptor::FileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace) : directory(directory),
                                                                                                  startingBlock(startingBlock),
                                                                                                  blocksReserved(blocksReserved),
-                                                                                                 usedSpace(usedSpace){}
+                                                                                                 usedSpace(usedSpace),
+                                                                                                 deleted(false){}
 
 bool FileDescriptor::isDirectory() const {
     return directory;
@@ -28,6 +29,22 @@ unsigned int FileDescriptor::getUsedSpace() const {
 void FileDescriptor::setUsedSpace(unsigned int usedSpace) {
     FileDescriptor::usedSpace = usedSpace;
 }
+
+std::ostream &operator<<(std::ostream &os, const FileDescriptor &descriptor) {
+    os << "startingBlock: " << descriptor.startingBlock << " blocksReserved: " << descriptor.blocksReserved
+       << " usedSpace: " << descriptor.usedSpace << (descriptor.directory ? " - is a directory" : " - is not a directory") << (descriptor.deleted ? " - is deleted" : "");
+    return os;
+}
+
+void FileDescriptor::setBlocksReserved(unsigned int blocksReserved) {
+    FileDescriptor::blocksReserved = blocksReserved;
+}
+
+void FileDescriptor::markDeleted() {
+    FileDescriptor::deleted = true;
+}
+
+
 
 
 

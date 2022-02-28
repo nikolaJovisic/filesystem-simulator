@@ -63,7 +63,6 @@ void OccupationMap::free(unsigned int startBlock, unsigned int numberOfBlocks) {
 }
 
 void OccupationMap::print() {
-    std::cout<<"File content zone free blocks:"<<std::endl;
     for(auto segment: map) {
         std::cout<<segment.first<<" - "<<segment.second<<std::endl;
     }

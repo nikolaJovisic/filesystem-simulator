@@ -5,16 +5,10 @@
 #include "DescriptorManager.h"
 #include <stdexcept>
 #include <iostream>
+#include <deque>
 
-DescriptorManager::DescriptorManager() {
-    blocksAvailable = 0;
-    descriptorCount = 0;
-    descriptorsPerBlock = 0;
-}
 
-DescriptorManager::DescriptorManager(const PersistentStorage &persistentStorage, unsigned int blocksAvailable) {
-    this->persistentStorage = persistentStorage;
-    this->blocksAvailable = blocksAvailable;
+DescriptorManager::DescriptorManager(PersistentStorage &persistentStorage, unsigned int blocksAvailable) : persistentStorage(persistentStorage), blocksAvailable(blocksAvailable){
     descriptorsPerBlock = persistentStorage.blockSize() / sizeof(FileDescriptor);
     descriptorCount = 0;
 }
@@ -57,7 +51,7 @@ void DescriptorManager::updateDescriptor(unsigned int index, FileDescriptor file
 
 void DescriptorManager::printAllDescriptors() {
     for (int i = 0; i < descriptorCount; ++i) {
-        std::cout<<i<<": starting block = "<<getDescriptor(i).getStartingBlock()<<std::endl;
+        std::cout<<i<<": "<<getDescriptor(i)<<std::endl;
     }
 }
 

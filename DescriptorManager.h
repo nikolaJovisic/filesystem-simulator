@@ -10,13 +10,12 @@
 
 class DescriptorManager {
 private:
-    PersistentStorage persistentStorage;
+    PersistentStorage &persistentStorage;
     unsigned descriptorCount;
     unsigned blocksAvailable;
     unsigned descriptorsPerBlock;
 public:
-    DescriptorManager(const PersistentStorage &persistentStorage, unsigned blocksAvailable);
-    DescriptorManager();
+    DescriptorManager(PersistentStorage &persistentStorage, unsigned blocksAvailable);
     unsigned addDescriptor(FileDescriptor fileDescriptor);
     FileDescriptor getDescriptor(unsigned index);
     void updateDescriptor(unsigned index, FileDescriptor fileDescriptor);
