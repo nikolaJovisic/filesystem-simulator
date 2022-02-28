@@ -1,48 +1,36 @@
 #include <iostream>
 #include "PersistentStorage.h"
+#include "OccupationMap.h"
+#include "DescriptorManager.h"
+#include "Directory.h"
+#include "PathTransform.h"
+#include "ContinuousFilesystem.h"
 using namespace std;
 
-int main() {
-    const unsigned numberOfBlocks = 3;
-    const unsigned bytesPerBlock = 16;
-    PersistentStorage persistentStorage = PersistentStorage(numberOfBlocks, bytesPerBlock);
+typedef void (*TestFunction) (Filesystem& fs);
 
-    char block[16];
+void test1(Filesystem& fs) {
+    fs.printState();
+    fs.create("/f0.txt", false, 10);
+    fs.create("/dir", true, 10);
+    fs.create("/dir/f1.txt", false, 10);
 
-    for (int i = 0; i < 16; ++i) {
-        block[i] = '0';
-    }
+    fs.printState();
+    fs.listContentsAt("/");
+    fs.listContentsAt("/dir");
 
-    block[7] = '1';
-
-    for (int i = 0; i < 16; ++i) {
-        std::cout << block[i];
-    }
-    std::cout<<std::endl;
-
-    persistentStorage.write(0, block);
-
-    block[8] = '1';
-
-    for (int i = 0; i < 16; ++i) {
-        std::cout << block[i];
-    }
-    std::cout<<std::endl;
-
-    persistentStorage.write(1, block);
-
-    persistentStorage.read(0, block);
-
-    for (int i = 0; i < 16; ++i) {
-        std::cout << block[i];
-    }
-    std::cout<<std::endl;
-
-    persistentStorage.read(1, block);
-
-    for (int i = 0; i < 16; ++i) {
-        std::cout << block[i];
-    }
-    std::cout<<std::endl;
-    
+    fs.remove("/dir");
+    fs.listContentsAt("/");
+    fs.printState();
 }
+
+
+int main() {
+    PersistentStorage persistentStorage(1000, 512);
+    ContinuousFilesystem cfs(persistentStorage);
+    test1(cfs);
+}
+
+
+
+
