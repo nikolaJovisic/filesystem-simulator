@@ -67,8 +67,8 @@ build CMakeFiles/filesystem_simulator.dir/FileDescriptor.cpp.obj: CXX_COMPILER__
   OBJECT_DIR = CMakeFiles\filesystem_simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\filesystem_simulator.dir
 
-build CMakeFiles/filesystem_simulator.dir/FileManagementLayer.cpp.obj: CXX_COMPILER__filesystem_simulator_Debug C$:/Users/paracelsus/Desktop/filesystem-simulator/FileManagementLayer.cpp || cmake_object_order_depends_target_filesystem_simulator
-  DEP_FILE = CMakeFiles\filesystem_simulator.dir\FileManagementLayer.cpp.obj.d
+build CMakeFiles/filesystem_simulator.dir/Filesystem.cpp.obj: CXX_COMPILER__filesystem_simulator_Debug C$:/Users/paracelsus/Desktop/filesystem-simulator/Filesystem.cpp || cmake_object_order_depends_target_filesystem_simulator
+  DEP_FILE = CMakeFiles\filesystem_simulator.dir\Filesystem.cpp.obj.d
   FLAGS = -g -std=gnu++23
   OBJECT_DIR = CMakeFiles\filesystem_simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\filesystem_simulator.dir
@@ -79,8 +79,8 @@ build CMakeFiles/filesystem_simulator.dir/OpenedFileDescriptor.cpp.obj: CXX_COMP
   OBJECT_DIR = CMakeFiles\filesystem_simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\filesystem_simulator.dir
 
-build CMakeFiles/filesystem_simulator.dir/ContinuousFileSystem.cpp.obj: CXX_COMPILER__filesystem_simulator_Debug C$:/Users/paracelsus/Desktop/filesystem-simulator/ContinuousFileSystem.cpp || cmake_object_order_depends_target_filesystem_simulator
-  DEP_FILE = CMakeFiles\filesystem_simulator.dir\ContinuousFileSystem.cpp.obj.d
+build CMakeFiles/filesystem_simulator.dir/ContinuousFilesystem.cpp.obj: CXX_COMPILER__filesystem_simulator_Debug C$:/Users/paracelsus/Desktop/filesystem-simulator/ContinuousFilesystem.cpp || cmake_object_order_depends_target_filesystem_simulator
+  DEP_FILE = CMakeFiles\filesystem_simulator.dir\ContinuousFilesystem.cpp.obj.d
   FLAGS = -g -std=gnu++23
   OBJECT_DIR = CMakeFiles\filesystem_simulator.dir
   OBJECT_FILE_DIR = CMakeFiles\filesystem_simulator.dir
@@ -123,7 +123,7 @@ build CMakeFiles/filesystem_simulator.dir/PersistentStorageController.cpp.obj: C
 #############################################
 # Link the executable filesystem_simulator.exe
 
-build filesystem_simulator.exe: CXX_EXECUTABLE_LINKER__filesystem_simulator_Debug CMakeFiles/filesystem_simulator.dir/main.cpp.obj CMakeFiles/filesystem_simulator.dir/PersistentStorage.cpp.obj CMakeFiles/filesystem_simulator.dir/FileDescriptor.cpp.obj CMakeFiles/filesystem_simulator.dir/FileManagementLayer.cpp.obj CMakeFiles/filesystem_simulator.dir/OpenedFileDescriptor.cpp.obj CMakeFiles/filesystem_simulator.dir/ContinuousFileSystem.cpp.obj CMakeFiles/filesystem_simulator.dir/Directory.cpp.obj CMakeFiles/filesystem_simulator.dir/OccupationMap.cpp.obj CMakeFiles/filesystem_simulator.dir/DescriptorManager.cpp.obj CMakeFiles/filesystem_simulator.dir/PathTransform.cpp.obj CMakeFiles/filesystem_simulator.dir/PersistentStorageController.cpp.obj
+build filesystem_simulator.exe: CXX_EXECUTABLE_LINKER__filesystem_simulator_Debug CMakeFiles/filesystem_simulator.dir/main.cpp.obj CMakeFiles/filesystem_simulator.dir/PersistentStorage.cpp.obj CMakeFiles/filesystem_simulator.dir/FileDescriptor.cpp.obj CMakeFiles/filesystem_simulator.dir/Filesystem.cpp.obj CMakeFiles/filesystem_simulator.dir/OpenedFileDescriptor.cpp.obj CMakeFiles/filesystem_simulator.dir/ContinuousFilesystem.cpp.obj CMakeFiles/filesystem_simulator.dir/Directory.cpp.obj CMakeFiles/filesystem_simulator.dir/OccupationMap.cpp.obj CMakeFiles/filesystem_simulator.dir/DescriptorManager.cpp.obj CMakeFiles/filesystem_simulator.dir/PathTransform.cpp.obj CMakeFiles/filesystem_simulator.dir/PersistentStorageController.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\filesystem_simulator.dir

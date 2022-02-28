@@ -166,12 +166,12 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "FileManagementLayer.cpp",
+			"path" : "Filesystem.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
-			"path" : "FileManagementLayer.h",
+			"path" : "Filesystem.h",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -188,12 +188,12 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "ContinuousFileSystem.cpp",
+			"path" : "ContinuousFilesystem.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
-			"path" : "ContinuousFileSystem.h",
+			"path" : "ContinuousFilesystem.h",
 			"sourceGroupIndex" : 1
 		},
 		{
