@@ -22,7 +22,7 @@ public:
     Directory(char *src, unsigned length);
     std::vector<std::string> getAllFilenames();
     int getIndex(std::string filename);
-    void addFile(std::string filename, unsigned index); //overwrite default
+    void addFile(std::string filename, unsigned index);
     void removeFile(std::string filename);
     unsigned size();
     void serialize(char *dst);

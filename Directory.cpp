@@ -3,6 +3,7 @@
 //
 
 #include "Directory.h"
+#include <stdexcept>
 
 Directory::Directory() : content() {}
 
@@ -56,7 +57,8 @@ int Directory::getIndex(std::string filename) {
 }
 
 void Directory::addFile(std::string filename, unsigned int index) {
-    content[filename] = index; //overwrite default
+    if (content.contains(filename)) throw std::invalid_argument("File with that name already exists.");
+    content[filename] = index;
 }
 
 void Directory::removeFile(std::string filename) {
