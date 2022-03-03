@@ -14,7 +14,7 @@ void Filesystem::printState() {
     std::cout<<persistentStorage<<std::endl;
     std::cout<<"OPENED FILES:"<<std::endl;
     for(auto& descriptor: openedFiles) {
-        std::cout<<descriptor.first<<":"<<std::endl;
+        std::cout<<descriptor.first<<": ";
         std::cout<<descriptor.second<<std::endl;
     }
 }

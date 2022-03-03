@@ -31,8 +31,9 @@ void FileDescriptor::setUsedSpace(unsigned int usedSpace) {
 }
 
 std::ostream &operator<<(std::ostream &os, const FileDescriptor &descriptor) {
-    os << "startingBlock: " << descriptor.startingBlock << " blocksReserved: " << descriptor.blocksReserved
-       << " usedSpace: " << descriptor.usedSpace << (descriptor.directory ? " - is a directory" : " - is not a directory") << (descriptor.deleted ? " - is deleted" : "");
+    os << (descriptor.deleted ? " startingBlock (historically): " : " startingBlock: ") << descriptor.startingBlock << (descriptor.deleted ? " blocksReserved (historically): " :" blocksReserved: ") << descriptor.blocksReserved;
+    if (!descriptor.deleted) os << " usedSpace: " << descriptor.usedSpace;
+    os << (descriptor.directory ? " - is a directory" : " - is not a directory") << (descriptor.deleted ? " - is deleted" : "");
     return os;
 }
 
