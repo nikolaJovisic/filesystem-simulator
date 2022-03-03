@@ -48,6 +48,7 @@ private:
 
     void saveDirectory(Directory directory, unsigned directoryIndex);
 
+    void removeFromRecord(const std::string &path, int index);
 };
 
 

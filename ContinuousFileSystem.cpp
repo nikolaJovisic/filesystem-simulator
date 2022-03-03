@@ -53,27 +53,33 @@ void ContinuousFilesystem::create(std::string path, bool isDirectory, unsigned i
 
 void ContinuousFilesystem::remove(std::string path) {
     auto index = open(path);
-    auto& descriptor = openedFiles.at(index);
-    descriptor.markDeleted();
-    descriptorManager.updateDescriptor(index, descriptor);
-    occupationMap.free(descriptor.getStartingBlock(), descriptor.getBlocksReserved());
-    if (descriptor.isDirectory()) {
-        auto directory =  getDirectory(index);
-        for(const auto& filename: directory.getAllFilenames()) {
-            remove(path + DELIMITER + filename);
-        }
-    }
+    removeFromRecord(path, index);
     auto directories = PathTransform::filePathDirectories(path);
     auto fileName = PathTransform::filePathFile(path);
     removeFromDirectory(directories, fileName);
     openedFiles.erase(index);
 }
 
+void ContinuousFilesystem::removeFromRecord(const std::string &path, int index) {
+    auto& descriptor = openedFiles.at(index);
+    if (descriptor.isDirectory()) {
+        auto directory =  getDirectory(index);
+        for(const auto& filename: directory.getAllFilenames()) {
+            auto filePath = path + DELIMITER + filename;
+            removeFromRecord(filePath, open(filePath));
+        }
+    }
+    occupationMap.free(descriptor.getStartingBlock(), descriptor.getBlocksReserved());
+    descriptor.markDeleted();
+    descriptor.setUsedSpace(0);
+    descriptorManager.updateDescriptor(index, descriptor);
+}
+
 void ContinuousFilesystem::read(unsigned int index, char *dst, unsigned int size) {
     if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
     auto& descriptor = openedFiles.at(index);
     if (descriptor.getPosition() + size > descriptor.getUsedSpace()) throw std::runtime_error("Reading out of bounds.");
-    PersistentStorageController::read(persistentStorage, descriptor.getStartingBlock(), dst, size);
+    PersistentStorageController::read(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), dst, size);
     descriptor.setPosition(descriptor.getPosition() + size);
 }
 
@@ -81,7 +87,7 @@ void ContinuousFilesystem::write(unsigned int index, char *src, unsigned int siz
     if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
     auto& descriptor = openedFiles.at(index);
     if (descriptor.getPosition() + size > descriptor.getBlocksReserved() * persistentStorage.blockSize()) throw std::runtime_error("Out of reserved memory.");
-    PersistentStorageController::write(persistentStorage, descriptor.getStartingBlock(), src, size);
+    PersistentStorageController::write(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), src, size);
     descriptor.setPosition(descriptor.getPosition() + size);
     descriptor.setUsedSpace(std::max(descriptor.getUsedSpace(), descriptor.getPosition()));
 }
@@ -144,7 +150,7 @@ Directory ContinuousFilesystem::getDirectory(unsigned directoryIndex) {
     unsigned directoryLength = directoryDescriptor.getUsedSpace();
 
     char directoryContent[directoryDescriptor.getBlocksReserved() * persistentStorage.blockSize()];
-    PersistentStorageController::read(persistentStorage, startingBlock, directoryContent, directoryLength);
+    PersistentStorageController::read(persistentStorage, startingBlock, 0, directoryContent, directoryLength);
     return Directory(directoryContent, directoryLength);
 }
 
@@ -155,7 +161,7 @@ void ContinuousFilesystem::saveDirectory(Directory directory, unsigned directory
 
     char directoryContent[directory.size()];
     directory.serialize(directoryContent);
-    PersistentStorageController::write(persistentStorage, directoryDescriptor.getStartingBlock(), directoryContent, directory.size());
+    PersistentStorageController::write(persistentStorage, directoryDescriptor.getStartingBlock(), 0, directoryContent, directory.size());
 
     directoryDescriptor.setUsedSpace(directory.size());
     descriptorManager.updateDescriptor(directoryIndex, directoryDescriptor);

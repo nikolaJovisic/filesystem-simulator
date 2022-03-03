@@ -9,8 +9,8 @@
 
 class PersistentStorageController {
 public:
-    static void write(PersistentStorage& persistentStorage, unsigned startingBlock, char *src, unsigned length);
-    static void read(PersistentStorage& persistentStorage, unsigned startingBlock, char *dst, unsigned length);
+    static void write(PersistentStorage& persistentStorage, unsigned startingBlock, unsigned position, char *src, unsigned length);
+    static void read(PersistentStorage& persistentStorage, unsigned startingBlock, unsigned position, char *dst, unsigned length);
 };
 
 
