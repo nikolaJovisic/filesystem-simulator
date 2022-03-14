@@ -12,7 +12,7 @@
 #include <iostream>
 
 int ContinuousFilesystem::open(std::string path) {
-    if (path == "/") {
+    if (path == std::string(1, DELIMITER)) {
         openedFiles.emplace(0, OpenedFileDescriptor(descriptorManager.getDescriptor(0)));
         return 0;
     }
