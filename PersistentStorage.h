@@ -7,6 +7,7 @@
 
 
 #include <ostream>
+#include <fstream>
 
 class PersistentStorage {
 private:
@@ -16,9 +17,11 @@ private:
 public:
     PersistentStorage();
     PersistentStorage(unsigned numberOfBlocks, unsigned bytesPerBlock);
+    explicit PersistentStorage(std::string filename);
     void write(unsigned block, char *src);
     void read(unsigned block, char *dst);
     ~PersistentStorage();
+    void serialize(std::string filename);
 
     [[nodiscard]] unsigned int getNumberOfBlocks() const;
 
