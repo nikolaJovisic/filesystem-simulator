@@ -7,8 +7,11 @@
 
 #include <string>
 
-const float DESCRIPTORS_MEMORY_SHARE = 0.1; //share of persistent memory capacity dedicated to descriptors
+const float DESCRIPTORS_MEMORY_SHARE = 0.1;
 const unsigned NUMBER_OF_BLOCKS_RESERVED_FOR_ROOT_DIRECTORY = 1;
+const unsigned MIN_NUMBER_OF_BLOCKS = 100;
+const unsigned MIN_NUMBER_OF_BYTES_PER_BLOCK = 32;
+const unsigned NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA = 10;
 const char DELIMITER = '/';
 
 #endif //FILESYSTEM_SIMULATOR_CONSTANTS_H
