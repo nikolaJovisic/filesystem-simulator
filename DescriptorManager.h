@@ -15,11 +15,14 @@ private:
     unsigned blocksAvailable;
     unsigned descriptorsPerBlock;
 public:
+    explicit DescriptorManager(PersistentStorage &persistentStorage);
     DescriptorManager(PersistentStorage &persistentStorage, unsigned blocksAvailable);
+    void loadFrom(char* src);
     unsigned addDescriptor(FileDescriptor fileDescriptor);
     FileDescriptor getDescriptor(unsigned index);
     void updateDescriptor(unsigned index, FileDescriptor fileDescriptor);
     void printAllDescriptors();
+    void serialize(char* dst);
 };
 
 

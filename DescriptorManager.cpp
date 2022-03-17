@@ -12,6 +12,9 @@ DescriptorManager::DescriptorManager(PersistentStorage &persistentStorage, unsig
     descriptorsPerBlock = persistentStorage.blockSize() / sizeof(FileDescriptor);
     descriptorCount = 0;
 }
+DescriptorManager::DescriptorManager(PersistentStorage &persistentStorage) : persistentStorage(persistentStorage) {
+}
+
 
 unsigned DescriptorManager::addDescriptor(FileDescriptor fileDescriptor) {
     if (descriptorCount == blocksAvailable * descriptorsPerBlock) {
@@ -54,5 +57,25 @@ void DescriptorManager::printAllDescriptors() {
         std::cout<<i<<": "<<getDescriptor(i)<<std::endl;
     }
 }
+
+void DescriptorManager::serialize(char *dst) {
+    memcpy(dst, (char *)&blocksAvailable, sizeof(unsigned));
+    dst += sizeof(unsigned);
+    memcpy(dst, (char *)&descriptorCount, sizeof(unsigned));
+    dst += sizeof(unsigned);
+    memcpy(dst, (char *)&descriptorsPerBlock, sizeof(unsigned));
+}
+
+void DescriptorManager::loadFrom(char *src) {
+    memcpy((char *)&blocksAvailable, src, sizeof(unsigned));
+    src += sizeof(unsigned);
+    memcpy((char *)&descriptorCount, src,sizeof(unsigned));
+    src += sizeof(unsigned);
+    memcpy((char *)&descriptorsPerBlock, src,sizeof(unsigned));
+}
+
+
+
+
 
 
