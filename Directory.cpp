@@ -4,6 +4,7 @@
 
 #include "Directory.h"
 #include <stdexcept>
+#include <cstring>
 
 Directory::Directory() : content() {}
 
@@ -35,9 +36,9 @@ void Directory::serialize(char *dst) {
     for(auto element: content) {
         unsigned filenameLength = element.first.length();
         unsigned index = element.second;
-        memcpy(dst, &filenameLength, sizeof(unsigned));
-        memcpy(dst += sizeof(unsigned), element.first.c_str(), sizeof(char) * filenameLength);
-        memcpy(dst += sizeof(char) * filenameLength, &index, sizeof(unsigned));
+        std::memcpy(dst, &filenameLength, sizeof(unsigned));
+        std::memcpy(dst += sizeof(unsigned), element.first.c_str(), sizeof(char) * filenameLength);
+        std::memcpy(dst += sizeof(char) * filenameLength, &index, sizeof(unsigned));
         dst += sizeof(unsigned);
     }
 }

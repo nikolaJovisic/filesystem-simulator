@@ -48,12 +48,12 @@ void PersistentStorage::serialize(std::string filename) {
 
 void PersistentStorage::write(unsigned int block, char *src) {
     if (block > numberOfBlocks) throw std::invalid_argument("Block number greater than storage maximum!");
-    memcpy(storage + block * bytesPerBlock, src, bytesPerBlock);
+    std::memcpy(storage + block * bytesPerBlock, src, bytesPerBlock);
 }
 
 void PersistentStorage::read(unsigned int block, char *dst) {
     if (block > numberOfBlocks) throw std::invalid_argument("Block number greater than storage maximum!");
-    memcpy(dst, storage + block * bytesPerBlock, bytesPerBlock);
+    std::memcpy(dst, storage + block * bytesPerBlock, bytesPerBlock);
 }
 
 PersistentStorage::~PersistentStorage() {

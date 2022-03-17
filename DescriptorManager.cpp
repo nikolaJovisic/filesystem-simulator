@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <deque>
+#include <cstring>
 
 
 DescriptorManager::DescriptorManager(PersistentStorage &persistentStorage, unsigned int blocksAvailable) : persistentStorage(persistentStorage), blocksAvailable(blocksAvailable){
@@ -24,7 +25,7 @@ unsigned DescriptorManager::addDescriptor(FileDescriptor fileDescriptor) {
     char content[persistentStorage.blockSize()];
     persistentStorage.read(block, content);
     auto positionInBlock = descriptorCount % descriptorsPerBlock;
-    memcpy(content + positionInBlock * sizeof(FileDescriptor), &fileDescriptor, sizeof(FileDescriptor));
+    std::memcpy(content + positionInBlock * sizeof(FileDescriptor), &fileDescriptor, sizeof(FileDescriptor));
     persistentStorage.write(block, content);
     return descriptorCount++;
 }
@@ -48,7 +49,7 @@ void DescriptorManager::updateDescriptor(unsigned int index, FileDescriptor file
     char content[persistentStorage.blockSize()];
     persistentStorage.read(block, content);
     auto positionInBlock = index % descriptorsPerBlock;
-    memcpy(content + positionInBlock * sizeof(FileDescriptor), &fileDescriptor, sizeof(FileDescriptor));
+    std::memcpy(content + positionInBlock * sizeof(FileDescriptor), &fileDescriptor, sizeof(FileDescriptor));
     persistentStorage.write(block, content);
 }
 
@@ -59,19 +60,19 @@ void DescriptorManager::printAllDescriptors() {
 }
 
 void DescriptorManager::serialize(char *dst) {
-    memcpy(dst, (char *)&blocksAvailable, sizeof(unsigned));
+    std::memcpy(dst, (char *)&blocksAvailable, sizeof(unsigned));
     dst += sizeof(unsigned);
-    memcpy(dst, (char *)&descriptorCount, sizeof(unsigned));
+    std::memcpy(dst, (char *)&descriptorCount, sizeof(unsigned));
     dst += sizeof(unsigned);
-    memcpy(dst, (char *)&descriptorsPerBlock, sizeof(unsigned));
+    std::memcpy(dst, (char *)&descriptorsPerBlock, sizeof(unsigned));
 }
 
 void DescriptorManager::loadFrom(char *src) {
-    memcpy((char *)&blocksAvailable, src, sizeof(unsigned));
+    std::memcpy((char *)&blocksAvailable, src, sizeof(unsigned));
     src += sizeof(unsigned);
-    memcpy((char *)&descriptorCount, src,sizeof(unsigned));
+    std::memcpy((char *)&descriptorCount, src,sizeof(unsigned));
     src += sizeof(unsigned);
-    memcpy((char *)&descriptorsPerBlock, src,sizeof(unsigned));
+    std::memcpy((char *)&descriptorsPerBlock, src,sizeof(unsigned));
 }
 
 

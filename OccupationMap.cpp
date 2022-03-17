@@ -5,6 +5,7 @@
 #include "OccupationMap.h"
 #include "Constants.h"
 #include <iostream>
+#include <cstring>
 
 OccupationMap::OccupationMap() {
 }
@@ -19,12 +20,12 @@ void OccupationMap::loadFrom(char *src) {
     unsigned mapSize;
     unsigned first;
     unsigned second;
-    memcpy((char *)&mapSize, src, sizeof(unsigned));
+    std::memcpy((char *)&mapSize, src, sizeof(unsigned));
     src += sizeof(unsigned);
     for (int i = 0; i < mapSize; ++i) {
-        memcpy((char *)&(first), src, sizeof(unsigned));
+        std::memcpy((char *)&(first), src, sizeof(unsigned));
         src += sizeof(unsigned);
-        memcpy((char *)&(second), src, sizeof(unsigned));
+        std::memcpy((char *)&(second), src, sizeof(unsigned));
         src += sizeof(unsigned);
         map.emplace(first, second);
     }
@@ -89,12 +90,12 @@ void OccupationMap::print() {
 
 void OccupationMap::serialize(char *dst) {
     unsigned mapSize = map.size();
-    memcpy(dst, (char *)&mapSize, sizeof(unsigned));
+    std::memcpy(dst, (char *)&mapSize, sizeof(unsigned));
     dst += sizeof(unsigned);
     for (auto i = map.begin(); i != map.end(); ++i) {
-        memcpy(dst, (char *)&(i->first), sizeof(unsigned));
+        std::memcpy(dst, (char *)&(i->first), sizeof(unsigned));
         dst += sizeof(unsigned);
-        memcpy(dst, (char *)&(i->second), sizeof(unsigned));
+        std::memcpy(dst, (char *)&(i->second), sizeof(unsigned));
         dst += sizeof(unsigned);
     }
 }

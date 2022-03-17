@@ -3,6 +3,7 @@
 //
 
 #include "PersistentStorageController.h"
+#include <cstring>
 
 void PersistentStorageController::write(PersistentStorage &persistentStorage, unsigned int startingBlock, unsigned position, char *src,
                                         unsigned int length) {
@@ -18,14 +19,14 @@ void PersistentStorageController::write(PersistentStorage &persistentStorage, un
 
     if (firstBlock == lastBlock) {
         persistentStorage.read(firstBlock, tmp);
-        memcpy(tmp + skipInFirst, src, length);
+        std::memcpy(tmp + skipInFirst, src, length);
         persistentStorage.write(firstBlock, tmp);
         return;
     }
 
     //first block
     persistentStorage.read(firstBlock, tmp);
-    memcpy(tmp + skipInFirst, src, blockSize - skipInFirst);
+    std::memcpy(tmp + skipInFirst, src, blockSize - skipInFirst);
     persistentStorage.write(firstBlock, tmp);
     src += blockSize - skipInFirst;
 
@@ -37,7 +38,7 @@ void PersistentStorageController::write(PersistentStorage &persistentStorage, un
 
     //last block
     persistentStorage.read(lastBlock, tmp);
-    memcpy(tmp, src, processInLast);
+    std::memcpy(tmp, src, processInLast);
     persistentStorage.write(lastBlock, tmp);
 }
 
@@ -55,13 +56,13 @@ void PersistentStorageController::read(PersistentStorage &persistentStorage, uns
 
     if (firstBlock == lastBlock) {
         persistentStorage.read(firstBlock, tmp);
-        memcpy(dst, tmp + skipInFirst, length);
+        std::memcpy(dst, tmp + skipInFirst, length);
         return;
     }
 
     //first block
     persistentStorage.read(firstBlock, tmp);
-    memcpy(dst, tmp + skipInFirst, blockSize - skipInFirst);
+    std::memcpy(dst, tmp + skipInFirst, blockSize - skipInFirst);
     dst += blockSize - skipInFirst;
 
     //middle blocks
@@ -72,5 +73,5 @@ void PersistentStorageController::read(PersistentStorage &persistentStorage, uns
 
     //last block
     persistentStorage.read(lastBlock, tmp);
-    memcpy(dst, tmp, processInLast);
+    std::memcpy(dst, tmp, processInLast);
 }
