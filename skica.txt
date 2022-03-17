@@ -1,0 +1,43 @@
+
+Šta simulira šta?
+PersistentStorage – fizički disk konektovan na računar
+PersistentStorageController – nivo apstrakcije iznad diska koji omogućava proizvoljno čitanje/pisanje
+*.cfs fajlovi – fizički disk koji tek treba mountovati (i eventualno formatirati) kao kontinualni fajlsistem čime prelazi u stanje PersistentStorage objekta u memoriji
+
+
+PersistentStorage
+Masovna memorija (disk) i operacije koje nudi simulirane su kroz klasu PersistentStorage. Iako je očekivano da je u compile time-u veličina masovne memorije (broj bajta, tj. broj blokova * veličina bloka) poznata jer se prosleđuje kao konstanta konstruktoru ove klase, odlučeno je da se koristi memorija na heap-u, i to metode malloc i free pre nego operatori new i delete jer je više u duhu simulacije diska (ne zauzima se memorija za objekat). Operacije koje se nude su 
+void PersistentStorage::write(unsigned int block, char *src)
+i
+void PersistentStorage::read(unsigned int block, char *dst).
+Ova klasa, dakle, omogućuje upis na masovnu memoriju i čitanje sa nje na najprimitivnijem mogućem nivou – moguće je blok memorije fiksne dužine u celosti prepisati iz operativne u masovnu ili iz masovne u operativnu memoriju i to je sve. 
+Kao i u ostatku implementacije, odlučeno je da se u duhu jezika višeg nivoa apstrakcije (C++) bacaju izuzeci pre nego vraćaju povratne vrednosti (bool, povratni kodovi i sl.) radi bolje čitljivosti i razumevanja simulatora.
+
+PersistentStorageController
+
+U opštim operacijama upisa u masovnu memoriju i čitanja sa nje ograničenja koja se nameću zbog fiksne dužine bloka za upis i ispis su mnogobrojna, otežavaju rad i odvlače pažnju od osnovnog problema, pa je odlučeno da se ove operacije uopšte kroz parnjake dve osnovne metode. Da bi klasa PersistentStorage ostala jedan na jedan reprezentacija hardvera, ove metode nisu dodate njoj već su smeštene u kontrolersku klasu kao statičke metode koje primaju samu instancu PersistentStorage-a kao parametar i nad njime vrši operacije.
+Metode za opšti upis i ispis -
+void PersistentStorageController::write(PersistentStorage &persistentStorage, unsigned int startingBlock, unsigned position, char *src, unsigned int length)
+i
+void PersistentStorageController::read(PersistentStorage &persistentStorage, unsigned int startingBlock, unsigned position, char *dst,  unsigned int length)
+sada daju mogućnost prepisivanja potpuno proizvoljnog komada memorije (sa potpuno proizvoljnog na potpuno proizvoljno mesto, potpuno proizvoljne dužine). Napisane su tako da ako memorija počinje i/ili završava negde na sredini bloka taj blok se, pre upisa na njega, učitava u operativnu memoriju, deo koji se menja promeni se tu i ceo takav blok upisuje se nazad u masovnu memoriju, tako da se ništa sem referencirane memorije ne menja. Pokazivačka aritmetika na ovom makronivou obuhvata izračunavanja nad brojem početnog bloka, trenutne vrednosti pokazivača (broj bajta koliko je udaljen od početka početnog bloka) i dužine memorije kojom se rukuje.
+
+Occupation map
+
+Da bi se vodila evidencija o zauzetosti blokova na disku u originalnoj literaturi se predlaže rešenje sa bitmapom gde svakom bloku odgovara vrednost jednog bita (0 – slobodan ili 1 – zauzet). U simulatoru odlučeno je ipak da se čuva kolekcija opsega slobodnih blokova (npr. za kapacitet od 512 blokova moguća je kolekcija {[0,10], [13, 512]}, što znači da su blokovi 11 i 12 zauzeti, a ostali slobodni). Ova klasa nema direktnu interakciju sa masovnom memorijom. Nudi metode
+
+unsigned OccupationMap::occupy(unsigned int numberOfBlocks)
+
+koja zauzima niz konsekutivnih blokova (koliko je zadato parametrom) i vraća indeks početnog bloka i
+
+void OccupationMap::free(unsigned int startBlock, unsigned int numberOfBlocks)
+
+koja oslobađa zadati broj blokova počevši od navedenog.
+
+Deskriptori
+
+Što se tiče brisanja i dodavanja deskriptora ponudila su se tri osnovna rešenja, sva tri relativno primitivna zbog prirode samih kontinualnih datoteka, koje ne pružaju prostora za nešto naprednije. U sva tri rešenja deskriptori se brišu logički postavljanjem bool atributa deleted na true, ali postoje razlike u tome kako se dalje time rukuje. 
+U prvoj varijanti se brisanje na tome i završava i deskriptori novododatih datoteka stalno se dodaju na kraj. U ovoj varijanti postoji problem bespotrebnog zauzimanja memorije za datoteke koje su obrisane i kojima više nikako i nije moguće pristupiti, ali sa druge strane proces dodavanja novog deskriptora je vrlo jednostavan jer za njega nije potrebno nikakvo čitanje već samo pisanje.
+Druga varijanta bi bila da se pri svakom dodavanju deskriptora redom učitavaju svi prethodni deskriptori i kada se naiđe na logički obrisan da se preko njega upiše novododati i njegov indeks vrati kao povratna vrednost. Ovako je delimično rešen problem suvišnog zauzimanja memorije, ali performanse dodavanja novog deskriptora padaju jer postoji potencijalno (worst case) učiavanje cele liste deskriptora sa diska da bi se upisao jedan novi.
+Postoji, naravno, i treća varijanta koja je varijacija na prvu, tj. da sistem u runtime-u funkcioniše kao prvo rešenje, ali da se povremeno ručno ili automatski pokreće proces koji vrši kompletno osvežavanje sistema gde se obrisani deskriptori overwrite-uju postojećim sa kraja liste, tako da osolobode prostor na njemu, a indeksi se takođe ažuriraju u celom fajlsistemu.
+Kako u originalnoj literaturi ovaj problem nije opisan, a treća varijanta uvodi značajnu komplikaciju sistema, u simulatoru je bilo potrebno odlučiti se za jednu od prve dve. Kako to obično i biva u računarstvu nailazi se na tradeoff između memorije i performansi. Moglo bi se očekivati da bi varijanta sa boljim perfomasama bila korištena u sistemu koji je potrebno da radi uvek istom brzinom i to relativno brzo (npr. neki sistemi za rad u realnom vremenu) i relativno često se formatira, dok bi druga varijanta bila korisna u sistemu koji iz nekih razloga ima vrlo ograničene memorijske kapacitete, performanse nisu mnogo značajne i retko se formatira. S obzirom na postojanje i prednosti i mana obe varijante, a kako je u pitanju opšti simulator, proizvoljno je odlučeno da se u implementaciji nađe prvo rešenje (performanse > memorija).
