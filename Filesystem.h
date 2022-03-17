@@ -24,6 +24,8 @@ public:
     virtual void seek(unsigned index, unsigned position) = 0;
     virtual void remove(std::string path) = 0;
 
+    virtual void serialize(std::string path) = 0;
+
     virtual void listContentsAt(std::string path) = 0;
     virtual void printState();
 };

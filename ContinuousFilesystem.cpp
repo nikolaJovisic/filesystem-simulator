@@ -104,14 +104,27 @@ ContinuousFilesystem::ContinuousFilesystem(PersistentStorage &persistentStorage)
                                                                                    occupationMap(
                                                                                            persistentStorage.getNumberOfBlocks() *
                                                                                            DESCRIPTORS_MEMORY_SHARE,
-                                                                                           persistentStorage.getNumberOfBlocks()),
+                                                                                           persistentStorage.getNumberOfBlocks() - NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA),
                                                                                    descriptorManager(persistentStorage,
                                                                                                      persistentStorage.getNumberOfBlocks() *
                                                                                                      DESCRIPTORS_MEMORY_SHARE) {
+
     auto rootStartingBlock = occupationMap.occupy(NUMBER_OF_BLOCKS_RESERVED_FOR_ROOT_DIRECTORY);
     FileDescriptor rootDirectoryDescriptor = FileDescriptor(true, rootStartingBlock,
                                                             NUMBER_OF_BLOCKS_RESERVED_FOR_ROOT_DIRECTORY, 0);
     descriptorManager.addDescriptor(rootDirectoryDescriptor);
+}
+
+ContinuousFilesystem::ContinuousFilesystem(PersistentStorage &persistentStorage, MountType mountType): Filesystem(
+        persistentStorage), occupationMap(), descriptorManager(persistentStorage){
+    unsigned metadataLength = NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA * persistentStorage.blockSize();
+    unsigned metadataStartingBlock = persistentStorage.getNumberOfBlocks() - NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA;
+    char metadata[metadataLength];
+    PersistentStorageController::read(persistentStorage, metadataStartingBlock, 0, metadata, metadataLength);
+    char* readingPointer = metadata;
+    occupationMap.loadFrom(readingPointer);
+    readingPointer += occupationMap.serializationSize();
+    descriptorManager.loadFrom(readingPointer);
 }
 
 void ContinuousFilesystem::addToDirectory(std::deque<std::string>& directories, std::string fileName,
@@ -183,6 +196,18 @@ void ContinuousFilesystem::listContentsAt(std::string path) {
     for(auto i: filenames) {
         std::cout<<i<<std::endl;
     }
+}
+
+void ContinuousFilesystem::serialize(std::string filename) {
+    unsigned metadataLength = NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA * persistentStorage.blockSize();
+    unsigned metadataStartingBlock = persistentStorage.getNumberOfBlocks() - NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA;
+    char metadata[metadataLength];
+    char* writingPointer = metadata;
+    occupationMap.serialize(writingPointer);
+    writingPointer += occupationMap.serializationSize();
+    descriptorManager.serialize(writingPointer);
+    PersistentStorageController::write(persistentStorage, metadataStartingBlock, 0, metadata, metadataLength);
+    persistentStorage.serialize(filename);
 }
 
 

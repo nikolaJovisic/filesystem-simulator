@@ -17,7 +17,12 @@ private:
     OccupationMap occupationMap;
     DescriptorManager descriptorManager;
 public:
+    enum MountType {
+        BACK
+    };
     explicit ContinuousFilesystem(PersistentStorage &persistentStorage);
+
+    explicit ContinuousFilesystem(PersistentStorage &persistentStorage, MountType mountType);
 
     int open(std::string path) override;
 
@@ -32,6 +37,8 @@ public:
     void seek(unsigned int index, unsigned int position) override;
 
     void remove(std::string path) override;
+
+    void serialize(std::string filename) override;
 
     void listContentsAt(std::string path) override;
 
