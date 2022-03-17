@@ -104,9 +104,15 @@ void demo(Filesystem& fs) {
 
 
 int main() {
-    PersistentStorage persistentStorage(1000, 64);
+
+    PersistentStorage persistentStorage(10000, 128);
     ContinuousFilesystem cfs(persistentStorage);
-    demo(cfs);
+    cfs.serialize("demo.cfs");
+
+    PersistentStorage ps("demo.cfs");
+    ContinuousFilesystem cfs2(ps, ContinuousFilesystem::BACK);
+
+    demo(cfs2);
 }
 
 
