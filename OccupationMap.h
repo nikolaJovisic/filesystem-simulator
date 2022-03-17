@@ -6,6 +6,7 @@
 #define FILESYSTEM_SIMULATOR_OCCUPATIONMAP_H
 
 #include <set>
+#include <fstream>
 
 class OccupationMap {
 private:
@@ -16,6 +17,9 @@ public:
     unsigned occupy(unsigned numberOfBlocks);
     void free(unsigned startBlock, unsigned numberOfBlocks);
     void print();
+    void serialize(char* dst);
+    unsigned serializationSize();
+    void loadFrom(char *src);
 };
 
 

@@ -6,9 +6,28 @@
 #include "Constants.h"
 #include <iostream>
 
+OccupationMap::OccupationMap() {
+}
+
 OccupationMap::OccupationMap(unsigned startBlock, unsigned endBlock) {
     map = std::set<std::pair<unsigned, unsigned>>();
     map.emplace(startBlock, endBlock);
+}
+
+void OccupationMap::loadFrom(char *src) {
+    map = std::set<std::pair<unsigned, unsigned>>();
+    unsigned mapSize;
+    unsigned first;
+    unsigned second;
+    memcpy((char *)&mapSize, src, sizeof(unsigned));
+    src += sizeof(unsigned);
+    for (int i = 0; i < mapSize; ++i) {
+        memcpy((char *)&(first), src, sizeof(unsigned));
+        src += sizeof(unsigned);
+        memcpy((char *)&(second), src, sizeof(unsigned));
+        src += sizeof(unsigned);
+        map.emplace(first, second);
+    }
 }
 
 unsigned OccupationMap::occupy(unsigned int numberOfBlocks) {
@@ -68,7 +87,24 @@ void OccupationMap::print() {
     }
 }
 
-OccupationMap::OccupationMap() {
+void OccupationMap::serialize(char *dst) {
+    unsigned mapSize = map.size();
+    memcpy(dst, (char *)&mapSize, sizeof(unsigned));
+    dst += sizeof(unsigned);
+    for (auto i = map.begin(); i != map.end(); ++i) {
+        memcpy(dst, (char *)&(i->first), sizeof(unsigned));
+        dst += sizeof(unsigned);
+        memcpy(dst, (char *)&(i->second), sizeof(unsigned));
+        dst += sizeof(unsigned);
+    }
 }
+
+unsigned OccupationMap::serializationSize() {
+    return sizeof(unsigned) + map.size() * (2 * sizeof(unsigned));
+}
+
+
+
+
 
 
