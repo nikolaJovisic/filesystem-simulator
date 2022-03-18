@@ -198,16 +198,15 @@ void ContinuousFilesystem::listContentsAt(std::string path) {
     }
 }
 
-void ContinuousFilesystem::serialize(std::string filename) {
+void ContinuousFilesystem::persistMetadata() {
     unsigned metadataLength = NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA * persistentStorage.blockSize();
     unsigned metadataStartingBlock = persistentStorage.getNumberOfBlocks() - NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA;
     char metadata[metadataLength];
     char* writingPointer = metadata;
-    occupationMap.serialize(writingPointer);
+    occupationMap.serializeInMemory(writingPointer);
     writingPointer += occupationMap.serializationSize();
-    descriptorManager.serialize(writingPointer);
+    descriptorManager.serializeInMemory(writingPointer);
     PersistentStorageController::write(persistentStorage, metadataStartingBlock, 0, metadata, metadataLength);
-    persistentStorage.serialize(filename);
 }
 
 

@@ -24,7 +24,7 @@ public:
 
     void remove(std::string path) override;
 
-    void serialize(std::string path) override;
+    void persistMetadata() override;
 
     void listContentsAt(std::string path) override;
 

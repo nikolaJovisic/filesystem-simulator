@@ -21,7 +21,7 @@ public:
     void write(unsigned block, char *src);
     void read(unsigned block, char *dst);
     ~PersistentStorage();
-    void serialize(std::string filename);
+    void serializeInFile(std::string filename);
 
     [[nodiscard]] unsigned int getNumberOfBlocks() const;
 

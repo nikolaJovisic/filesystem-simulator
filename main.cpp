@@ -106,7 +106,7 @@ int main() {
 
     PersistentStorage persistentStorage(10000, 128);
     ContinuousFilesystem cfs(persistentStorage);
-    cfs.serialize("demo.cfs");
+    cfs.serializeInFile("demo.cfs");
 
     PersistentStorage ps("demo.cfs");
     ContinuousFilesystem cfs2(ps, ContinuousFilesystem::BACK);

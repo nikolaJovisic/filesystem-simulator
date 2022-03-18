@@ -88,7 +88,7 @@ void OccupationMap::print() {
     }
 }
 
-void OccupationMap::serialize(char *dst) {
+void OccupationMap::serializeInMemory(char *dst) {
     unsigned mapSize = map.size();
     std::memcpy(dst, (char *)&mapSize, sizeof(unsigned));
     dst += sizeof(unsigned);

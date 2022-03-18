@@ -33,7 +33,7 @@ PersistentStorage::PersistentStorage(std::string filename) {
     if(!rf.good()) throw std::runtime_error("Error in deserialization.");
 }
 
-void PersistentStorage::serialize(std::string filename) {
+void PersistentStorage::serializeInFile(std::string filename) {
     std::ofstream wf(filename, std::ios::out | std::ios::binary);
     if(!wf) throw ("Filename problem.");
 

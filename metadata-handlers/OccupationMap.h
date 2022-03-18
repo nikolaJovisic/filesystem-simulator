@@ -17,7 +17,7 @@ public:
     unsigned occupy(unsigned numberOfBlocks);
     void free(unsigned startBlock, unsigned numberOfBlocks);
     void print();
-    void serialize(char* dst);
+    void serializeInMemory(char* dst);
     unsigned serializationSize();
     void loadFrom(char *src);
 };

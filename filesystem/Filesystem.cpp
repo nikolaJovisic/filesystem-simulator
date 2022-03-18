@@ -19,3 +19,8 @@ void Filesystem::printState() {
     }
 }
 
+void Filesystem::serializeInFile(std::string filename) {
+    persistMetadata();
+    persistentStorage.serializeInFile(filename);
+}
+

@@ -1,4 +1,4 @@
-a//
+//
 // Created by paracelsus on 3/18/2022.
 //
 
@@ -32,9 +32,6 @@ void ScatteredFilesystem::remove(std::string path) {
 
 }
 
-void ScatteredFilesystem::serialize(std::string path) {
-
-}
 
 void ScatteredFilesystem::listContentsAt(std::string path) {
 
@@ -42,4 +39,8 @@ void ScatteredFilesystem::listContentsAt(std::string path) {
 
 void ScatteredFilesystem::printState() {
     Filesystem::printState();
+}
+
+void ScatteredFilesystem::persistMetadata() {
+
 }

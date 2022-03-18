@@ -38,13 +38,14 @@ public:
 
     void remove(std::string path) override;
 
-    void serialize(std::string filename) override;
 
     void listContentsAt(std::string path) override;
 
     void printState() override;
 
 private:
+    void persistMetadata() override;
+
     Directory getDirectory(unsigned directoryIndex);
 
     void addToDirectory(std::deque<std::string>& directories, std::string fileName, unsigned fileIndex);

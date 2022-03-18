@@ -14,6 +14,7 @@ class Filesystem {
 protected:
     PersistentStorage& persistentStorage;
     std::map<unsigned, OpenedContinuousFileDescriptor> openedFiles;
+    virtual void persistMetadata() = 0;
 public:
     explicit Filesystem(PersistentStorage &persistentStorage);
     virtual int open(std::string path) = 0;
@@ -24,7 +25,7 @@ public:
     virtual void seek(unsigned index, unsigned position) = 0;
     virtual void remove(std::string path) = 0;
 
-    virtual void serialize(std::string path) = 0;
+    void serializeInFile(std::string filename);
 
     virtual void listContentsAt(std::string path) = 0;
     virtual void printState();

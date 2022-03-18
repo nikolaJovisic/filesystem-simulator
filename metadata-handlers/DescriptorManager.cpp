@@ -58,7 +58,7 @@ void DescriptorManager::printAllDescriptors() {
     }
 }
 
-void DescriptorManager::serialize(char *dst) {
+void DescriptorManager::serializeInMemory(char *dst) {
     std::memcpy(dst, (char *)&blocksAvailable, sizeof(unsigned));
     dst += sizeof(unsigned);
     std::memcpy(dst, (char *)&descriptorCount, sizeof(unsigned));

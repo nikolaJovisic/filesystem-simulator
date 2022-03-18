@@ -22,7 +22,7 @@ public:
     ContinuousFileDescriptor getDescriptor(unsigned index);
     void updateDescriptor(unsigned index, ContinuousFileDescriptor fileDescriptor);
     void printAllDescriptors();
-    void serialize(char* dst);
+    void serializeInMemory(char* dst);
 };
 
 
