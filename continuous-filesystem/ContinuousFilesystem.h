@@ -38,15 +38,12 @@ public:
 
     void remove(std::string path) override;
 
-
-    void listContentsAt(std::string path) override;
-
     void printState() override;
 
 private:
     void persistMetadata() override;
 
-    Directory getDirectory(unsigned directoryIndex);
+    Directory getDirectory(unsigned directoryIndex) override;
 
     void addToDirectory(std::deque<std::string>& directories, std::string fileName, unsigned fileIndex);
 
@@ -54,7 +51,7 @@ private:
 
     unsigned getLastDirectoryIndex(unsigned startingDirectoryIndex, std::deque<std::string> &directories);
 
-    void saveDirectory(Directory directory, unsigned directoryIndex);
+    void saveDirectory(Directory directory, unsigned directoryIndex) override;
 
     void removeFromRecord(const std::string &path, int index);
 };

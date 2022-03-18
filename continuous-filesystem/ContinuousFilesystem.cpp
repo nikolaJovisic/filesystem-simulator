@@ -188,15 +188,6 @@ void ContinuousFilesystem::printState() {
     descriptorManager.printAllDescriptors();
 }
 
-void ContinuousFilesystem::listContentsAt(std::string path) {
-    std::cout<<"-------------------"<<std::endl;
-    auto index = open(path);
-    auto filenames = getDirectory(index).getAllFilenames();
-    close(index);
-    for(auto i: filenames) {
-        std::cout<<i<<std::endl;
-    }
-}
 
 void ContinuousFilesystem::persistMetadata() {
     unsigned metadataLength = NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA * persistentStorage.blockSize();

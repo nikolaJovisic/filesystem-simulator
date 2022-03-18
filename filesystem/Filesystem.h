@@ -7,6 +7,7 @@
 
 #include "../persistent-storage/PersistentStorage.h"
 #include "../continuous-filesystem/OpenedContinuousFileDescriptor.h"
+#include "Directory.h"
 #include <string>
 #include <map>
 
@@ -15,6 +16,8 @@ protected:
     PersistentStorage& persistentStorage;
     std::map<unsigned, OpenedContinuousFileDescriptor> openedFiles;
     virtual void persistMetadata() = 0;
+    virtual Directory getDirectory(unsigned directoryIndex) = 0;
+    virtual void saveDirectory(Directory directory, unsigned directoryIndex) = 0;
 public:
     explicit Filesystem(PersistentStorage &persistentStorage);
     virtual int open(std::string path) = 0;
@@ -25,10 +28,11 @@ public:
     virtual void seek(unsigned index, unsigned position) = 0;
     virtual void remove(std::string path) = 0;
 
-    void serializeInFile(std::string filename);
-
-    virtual void listContentsAt(std::string path) = 0;
     virtual void printState();
+
+    void serializeInFile(std::string filename);
+    void listContentsAt(std::string path);
+
 };
 
 

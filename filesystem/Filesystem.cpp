@@ -24,3 +24,13 @@ void Filesystem::serializeInFile(std::string filename) {
     persistentStorage.serializeInFile(filename);
 }
 
+void Filesystem::listContentsAt(std::string path) {
+    std::cout<<"-------------------"<<std::endl;
+    auto index = open(path);
+    auto filenames = getDirectory(index).getAllFilenames();
+    close(index);
+    for(auto i: filenames) {
+        std::cout<<i<<std::endl;
+    }
+}
+

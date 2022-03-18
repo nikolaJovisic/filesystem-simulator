@@ -26,9 +26,12 @@ public:
 
     void persistMetadata() override;
 
-    void listContentsAt(std::string path) override;
-
     void printState() override;
+
+protected:
+    Directory getDirectory(unsigned int directoryIndex) override;
+
+    void saveDirectory(Directory directory, unsigned int directoryIndex) override;
 };
 
 

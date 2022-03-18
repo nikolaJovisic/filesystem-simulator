@@ -32,15 +32,18 @@ void ScatteredFilesystem::remove(std::string path) {
 
 }
 
-
-void ScatteredFilesystem::listContentsAt(std::string path) {
-
-}
-
 void ScatteredFilesystem::printState() {
     Filesystem::printState();
 }
 
 void ScatteredFilesystem::persistMetadata() {
+
+}
+
+Directory ScatteredFilesystem::getDirectory(unsigned int directoryIndex) {
+    return Directory();
+}
+
+void ScatteredFilesystem::saveDirectory(Directory directory, unsigned int directoryIndex) {
 
 }
