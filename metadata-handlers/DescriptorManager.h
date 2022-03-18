@@ -5,8 +5,8 @@
 #ifndef FILESYSTEM_SIMULATOR_DESCRIPTORMANAGER_H
 #define FILESYSTEM_SIMULATOR_DESCRIPTORMANAGER_H
 
-#include "PersistentStorage.h"
-#include "ContinuousFileDescriptor.h"
+#include "../persistent-storage/PersistentStorage.h"
+#include "../continuous-filesystem/ContinuousFileDescriptor.h"
 
 class DescriptorManager {
 private:

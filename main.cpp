@@ -1,10 +1,9 @@
 #include <iostream>
-#include "PersistentStorage.h"
-#include "OccupationMap.h"
-#include "DescriptorManager.h"
-#include "Directory.h"
-#include "PathTransform.h"
-#include "ContinuousFilesystem.h"
+#include "persistent-storage/PersistentStorage.h"
+#include "metadata-handlers/OccupationMap.h"
+#include "metadata-handlers/DescriptorManager.h"
+#include "filesystem/Directory.h"
+#include "continuous-filesystem/ContinuousFilesystem.h"
 using namespace std;
 
 void demo(Filesystem& fs) {

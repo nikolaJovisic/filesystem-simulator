@@ -3,17 +3,17 @@
 //
 
 #include "ContinuousFilesystem.h"
-#include "Directory.h"
-#include "Constants.h"
-#include "PathTransform.h"
-#include "PersistentStorageController.h"
+#include "../filesystem/Directory.h"
+#include "../filesystem/Constants.h"
+#include "../filesystem/PathTransform.h"
+#include "../persistent-storage/PersistentStorageController.h"
 
 #include <stdexcept>
 #include <iostream>
 
 int ContinuousFilesystem::open(std::string path) {
     if (path == std::string(1, DELIMITER)) {
-        openedFiles.emplace(0, OpenedFileDescriptor(descriptorManager.getDescriptor(0)));
+        openedFiles.emplace(0, OpenedContinuousFileDescriptor(descriptorManager.getDescriptor(0)));
         return 0;
     }
 
@@ -29,7 +29,7 @@ int ContinuousFilesystem::open(std::string path) {
     if (openedFiles.contains(fileIndex)) throw std::invalid_argument("File already opened.");
 
     auto fileDescriptor = descriptorManager.getDescriptor(fileIndex);
-    openedFiles.emplace(fileIndex, OpenedFileDescriptor(fileDescriptor));
+    openedFiles.emplace(fileIndex, OpenedContinuousFileDescriptor(fileDescriptor));
 
     return fileIndex;
 }

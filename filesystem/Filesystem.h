@@ -5,15 +5,15 @@
 #ifndef FILESYSTEM_SIMULATOR_FILESYSTEM_H
 #define FILESYSTEM_SIMULATOR_FILESYSTEM_H
 
-#include "PersistentStorage.h"
-#include "OpenedFileDescriptor.h"
+#include "../persistent-storage/PersistentStorage.h"
+#include "../continuous-filesystem/OpenedContinuousFileDescriptor.h"
 #include <string>
 #include <map>
 
 class Filesystem {
 protected:
     PersistentStorage& persistentStorage;
-    std::map<unsigned, OpenedFileDescriptor> openedFiles;
+    std::map<unsigned, OpenedContinuousFileDescriptor> openedFiles;
 public:
     explicit Filesystem(PersistentStorage &persistentStorage);
     virtual int open(std::string path) = 0;

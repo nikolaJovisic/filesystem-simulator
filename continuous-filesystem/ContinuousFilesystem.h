@@ -5,10 +5,10 @@
 #ifndef FILESYSTEM_SIMULATOR_CONTINUOUSFILESYSTEM_H
 #define FILESYSTEM_SIMULATOR_CONTINUOUSFILESYSTEM_H
 
-#include "Filesystem.h"
-#include "OccupationMap.h"
-#include "DescriptorManager.h"
-#include "Directory.h"
+#include "../filesystem/Filesystem.h"
+#include "../metadata-handlers/OccupationMap.h"
+#include "../metadata-handlers/DescriptorManager.h"
+#include "../filesystem/Directory.h"
 
 #include <deque>
 
