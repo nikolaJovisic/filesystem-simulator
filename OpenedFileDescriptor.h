@@ -6,13 +6,13 @@
 #define FILESYSTEM_SIMULATOR_OPENEDFILEDESCRIPTOR_H
 
 #include <ostream>
-#include "FileDescriptor.h"
+#include "ContinuousFileDescriptor.h"
 
-class OpenedFileDescriptor : public FileDescriptor {
+class OpenedFileDescriptor : public ContinuousFileDescriptor {
 private:
     unsigned position;
 public:
-    explicit OpenedFileDescriptor(FileDescriptor);
+    explicit OpenedFileDescriptor(ContinuousFileDescriptor);
 
     [[nodiscard]] unsigned int getPosition() const;
 

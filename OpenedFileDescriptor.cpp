@@ -4,7 +4,7 @@
 
 #include "OpenedFileDescriptor.h"
 
-OpenedFileDescriptor::OpenedFileDescriptor(FileDescriptor fileDescriptor) : FileDescriptor(fileDescriptor) {
+OpenedFileDescriptor::OpenedFileDescriptor(ContinuousFileDescriptor fileDescriptor) : ContinuousFileDescriptor(fileDescriptor) {
     position = 0;
 }
 

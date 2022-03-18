@@ -5,19 +5,18 @@
 #include "DescriptorManager.h"
 #include <stdexcept>
 #include <iostream>
-#include <deque>
 #include <cstring>
 
 
 DescriptorManager::DescriptorManager(PersistentStorage &persistentStorage, unsigned int blocksAvailable) : persistentStorage(persistentStorage), blocksAvailable(blocksAvailable){
-    descriptorsPerBlock = persistentStorage.blockSize() / sizeof(FileDescriptor);
+    descriptorsPerBlock = persistentStorage.blockSize() / sizeof(ContinuousFileDescriptor);
     descriptorCount = 0;
 }
 DescriptorManager::DescriptorManager(PersistentStorage &persistentStorage) : persistentStorage(persistentStorage) {
 }
 
 
-unsigned DescriptorManager::addDescriptor(FileDescriptor fileDescriptor) {
+unsigned DescriptorManager::addDescriptor(ContinuousFileDescriptor fileDescriptor) {
     if (descriptorCount == blocksAvailable * descriptorsPerBlock) {
         throw std::runtime_error("Out of descriptor dedicated memory.");
     }
@@ -25,12 +24,12 @@ unsigned DescriptorManager::addDescriptor(FileDescriptor fileDescriptor) {
     char content[persistentStorage.blockSize()];
     persistentStorage.read(block, content);
     auto positionInBlock = descriptorCount % descriptorsPerBlock;
-    std::memcpy(content + positionInBlock * sizeof(FileDescriptor), &fileDescriptor, sizeof(FileDescriptor));
+    std::memcpy(content + positionInBlock * sizeof(ContinuousFileDescriptor), &fileDescriptor, sizeof(ContinuousFileDescriptor));
     persistentStorage.write(block, content);
     return descriptorCount++;
 }
 
-FileDescriptor DescriptorManager::getDescriptor(unsigned int index) {
+ContinuousFileDescriptor DescriptorManager::getDescriptor(unsigned int index) {
     if (index >= descriptorCount) {
         throw std::runtime_error("Index out of descriptor bounds.");
     }
@@ -38,10 +37,10 @@ FileDescriptor DescriptorManager::getDescriptor(unsigned int index) {
     char content[persistentStorage.blockSize()];
     persistentStorage.read(block, content);
     auto positionInBlock = index % descriptorsPerBlock;
-    return *reinterpret_cast<FileDescriptor *>(content + positionInBlock * sizeof(FileDescriptor));
+    return *reinterpret_cast<ContinuousFileDescriptor *>(content + positionInBlock * sizeof(ContinuousFileDescriptor));
 }
 
-void DescriptorManager::updateDescriptor(unsigned int index, FileDescriptor fileDescriptor) {
+void DescriptorManager::updateDescriptor(unsigned int index, ContinuousFileDescriptor fileDescriptor) {
     if (index >= descriptorCount) {
         throw std::runtime_error("Index out of descriptor bounds.");
     }
@@ -49,7 +48,7 @@ void DescriptorManager::updateDescriptor(unsigned int index, FileDescriptor file
     char content[persistentStorage.blockSize()];
     persistentStorage.read(block, content);
     auto positionInBlock = index % descriptorsPerBlock;
-    std::memcpy(content + positionInBlock * sizeof(FileDescriptor), &fileDescriptor, sizeof(FileDescriptor));
+    std::memcpy(content + positionInBlock * sizeof(ContinuousFileDescriptor), &fileDescriptor, sizeof(ContinuousFileDescriptor));
     persistentStorage.write(block, content);
 }
 

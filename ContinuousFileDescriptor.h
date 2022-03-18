@@ -2,13 +2,13 @@
 // Created by paracelsus on 2/13/2022.
 //
 
-#ifndef FILESYSTEM_SIMULATOR_FILEDESCRIPTOR_H
-#define FILESYSTEM_SIMULATOR_FILEDESCRIPTOR_H
+#ifndef FILESYSTEM_SIMULATOR_CONTINUOUSFILEDESCRIPTOR_H
+#define FILESYSTEM_SIMULATOR_CONTINUOUSFILEDESCRIPTOR_H
 
 
 #include <ostream>
 
-class FileDescriptor {
+class ContinuousFileDescriptor {
 protected:
     unsigned startingBlock;
     unsigned blocksReserved;
@@ -17,7 +17,7 @@ protected:
     bool deleted;
 
 public:
-    FileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace);
+    ContinuousFileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace);
 
     [[nodiscard]] bool isDirectory() const;
 
@@ -33,11 +33,11 @@ public:
 
     void markDeleted();
 
-    friend std::ostream &operator<<(std::ostream &os, const FileDescriptor &descriptor);
+    friend std::ostream &operator<<(std::ostream &os, const ContinuousFileDescriptor &descriptor);
 
 };
 
 
 
 
-#endif //FILESYSTEM_SIMULATOR_FILEDESCRIPTOR_H
+#endif //FILESYSTEM_SIMULATOR_CONTINUOUSFILEDESCRIPTOR_H

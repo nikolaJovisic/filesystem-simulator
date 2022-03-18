@@ -6,7 +6,7 @@
 #define FILESYSTEM_SIMULATOR_DESCRIPTORMANAGER_H
 
 #include "PersistentStorage.h"
-#include "FileDescriptor.h"
+#include "ContinuousFileDescriptor.h"
 
 class DescriptorManager {
 private:
@@ -18,9 +18,9 @@ public:
     explicit DescriptorManager(PersistentStorage &persistentStorage);
     DescriptorManager(PersistentStorage &persistentStorage, unsigned blocksAvailable);
     void loadFrom(char* src);
-    unsigned addDescriptor(FileDescriptor fileDescriptor);
-    FileDescriptor getDescriptor(unsigned index);
-    void updateDescriptor(unsigned index, FileDescriptor fileDescriptor);
+    unsigned addDescriptor(ContinuousFileDescriptor fileDescriptor);
+    ContinuousFileDescriptor getDescriptor(unsigned index);
+    void updateDescriptor(unsigned index, ContinuousFileDescriptor fileDescriptor);
     void printAllDescriptors();
     void serialize(char* dst);
 };

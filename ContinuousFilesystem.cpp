@@ -44,7 +44,7 @@ void ContinuousFilesystem::close(unsigned int index) {
 
 void ContinuousFilesystem::create(std::string path, bool isDirectory, unsigned int blocksReserved) {
     unsigned startingBlock = occupationMap.occupy(blocksReserved);
-    FileDescriptor fileDescriptor = FileDescriptor(isDirectory, startingBlock, blocksReserved, 0);
+    ContinuousFileDescriptor fileDescriptor = ContinuousFileDescriptor(isDirectory, startingBlock, blocksReserved, 0);
     unsigned fileIndex = descriptorManager.addDescriptor(fileDescriptor);
     auto directories = PathTransform::filePathDirectories(path);
     auto fileName = PathTransform::filePathFile(path);
@@ -110,8 +110,8 @@ ContinuousFilesystem::ContinuousFilesystem(PersistentStorage &persistentStorage)
                                                                                                      DESCRIPTORS_MEMORY_SHARE) {
 
     auto rootStartingBlock = occupationMap.occupy(NUMBER_OF_BLOCKS_RESERVED_FOR_ROOT_DIRECTORY);
-    FileDescriptor rootDirectoryDescriptor = FileDescriptor(true, rootStartingBlock,
-                                                            NUMBER_OF_BLOCKS_RESERVED_FOR_ROOT_DIRECTORY, 0);
+    ContinuousFileDescriptor rootDirectoryDescriptor = ContinuousFileDescriptor(true, rootStartingBlock,
+                                                                                NUMBER_OF_BLOCKS_RESERVED_FOR_ROOT_DIRECTORY, 0);
     descriptorManager.addDescriptor(rootDirectoryDescriptor);
 }
 
@@ -155,7 +155,7 @@ unsigned ContinuousFilesystem::getLastDirectoryIndex(unsigned startingDirectoryI
 }
 
 Directory ContinuousFilesystem::getDirectory(unsigned directoryIndex) {
-    FileDescriptor directoryDescriptor = descriptorManager.getDescriptor(directoryIndex);
+    ContinuousFileDescriptor directoryDescriptor = descriptorManager.getDescriptor(directoryIndex);
 
     if (!directoryDescriptor.isDirectory()) throw std::invalid_argument("File is not a directory.");
 
@@ -168,7 +168,7 @@ Directory ContinuousFilesystem::getDirectory(unsigned directoryIndex) {
 }
 
 void ContinuousFilesystem::saveDirectory(Directory directory, unsigned directoryIndex) {
-    FileDescriptor directoryDescriptor = descriptorManager.getDescriptor(directoryIndex);
+    ContinuousFileDescriptor directoryDescriptor = descriptorManager.getDescriptor(directoryIndex);
 
     if (directory.size() > directoryDescriptor.getBlocksReserved() * persistentStorage.blockSize()) throw std::runtime_error("Directory size surpasses maximum.");
 
