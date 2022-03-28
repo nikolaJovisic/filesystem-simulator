@@ -1,12 +1,15 @@
-#include <iostream>
-#include "persistent-storage/PersistentStorage.h"
-#include "metadata-handlers/OccupationMap.h"
-#include "metadata-handlers/DescriptorManager.h"
-#include "filesystem/Directory.h"
-#include "continuous-filesystem/ContinuousFilesystem.h"
-using namespace std;
+//
+// Created by paracelsus on 3/28/2022.
+//
 
-void demo(Filesystem& fs) {
+#include "Demo.h"
+#include "../persistent-storage/PersistentStorage.h"
+#include "../metadata-handlers/OccupationMap.h"
+#include "../metadata-handlers/DescriptorManager.h"
+#include "../filesystem/Directory.h"
+#include "../continuous-filesystem/ContinuousFilesystem.h"
+
+void Demo::cfsDemo(ContinuousFilesystem& fs) {
     std::cout<<"**********************************"<<std::endl;
     std::cout<<"Descriptor memory reserved, root directory and descriptor for it created."<<std::endl;
 
@@ -100,19 +103,3 @@ void demo(Filesystem& fs) {
     std::cout<<"File removed, occupation map space freed and merged with previous free space."<<std::endl;
     fs.printState();
 }
-
-
-int main() {
-    PersistentStorage psFormat(10000, 128);
-    ContinuousFilesystem cfsFormat(psFormat, ContinuousFilesystem::STANDARD_FORMAT);
-    cfsFormat.serializeInFile("demo.cfs");
-
-    PersistentStorage psMount("demo.cfs");
-    ContinuousFilesystem cfsMount(psMount, ContinuousFilesystem::STANDARD_MOUNT);
-
-    demo(cfsMount);
-}
-
-
-
-
