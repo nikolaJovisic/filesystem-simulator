@@ -57,6 +57,8 @@ private:
 
 protected:
     void readRaw(FileDescriptor& fileDescriptor, char *dst, unsigned int size) override;
+
+    void writeRaw(FileDescriptor &fileDescriptor, char *src, unsigned int size) override;
 };
 
 

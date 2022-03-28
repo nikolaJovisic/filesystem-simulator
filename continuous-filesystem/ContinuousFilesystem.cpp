@@ -81,6 +81,12 @@ void ContinuousFilesystem::readRaw(FileDescriptor& fileDescriptor, char *dst, un
     PersistentStorageController::read(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), dst, size);
 }
 
+void ContinuousFilesystem::writeRaw(FileDescriptor& fileDescriptor, char *src, unsigned int size) {
+    OpenedContinuousFileDescriptor descriptor = dynamic_cast<OpenedContinuousFileDescriptor&>(fileDescriptor);
+    if (descriptor.getPosition() + size > descriptor.getBlocksReserved() * persistentStorage.blockSize()) throw std::runtime_error("Out of reserved memory.");
+    PersistentStorageController::write(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), src, size);
+}
+
 void ContinuousFilesystem::read(unsigned int index, char *dst, unsigned int size) {
     if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
     auto& descriptor = openedFiles.at(index);
@@ -88,13 +94,10 @@ void ContinuousFilesystem::read(unsigned int index, char *dst, unsigned int size
     descriptor.setPosition(descriptor.getPosition() + size);
 }
 
-
-
 void ContinuousFilesystem::write(unsigned int index, char *src, unsigned int size) {
     if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
     auto& descriptor = openedFiles.at(index);
-    if (descriptor.getPosition() + size > descriptor.getBlocksReserved() * persistentStorage.blockSize()) throw std::runtime_error("Out of reserved memory.");
-    PersistentStorageController::write(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), src, size);
+    writeRaw(descriptor, src, size);
     descriptor.setPosition(descriptor.getPosition() + size);
     descriptor.setUsedSpace(std::max(descriptor.getUsedSpace(), descriptor.getPosition()));
 }
@@ -206,6 +209,7 @@ void ContinuousFilesystem::persistMetadata() {
     descriptorManager.serializeInMemory(writingPointer);
     PersistentStorageController::write(persistentStorage, metadataStartingBlock, 0, metadata, metadataLength);
 }
+
 
 
 

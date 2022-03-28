@@ -19,6 +19,7 @@ protected:
     virtual Directory getDirectory(unsigned directoryIndex) = 0;
     virtual void saveDirectory(Directory directory, unsigned directoryIndex) = 0;
     virtual void readRaw(FileDescriptor& fileDescriptor, char *dst, unsigned int size) = 0;
+    virtual void writeRaw(FileDescriptor& fileDescriptor, char *src, unsigned int size) = 0;
 public:
     explicit Filesystem(PersistentStorage &persistentStorage);
     virtual int open(std::string path) = 0;
