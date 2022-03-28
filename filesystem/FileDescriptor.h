@@ -9,13 +9,15 @@
 class FileDescriptor {
 protected:
     bool deleted;
+    bool directory;
+    FileDescriptor(bool directory);
 public:
-    FileDescriptor() {
-        deleted = false;
-    }
-    virtual void markDeleted() {
-        deleted = true;
-    }
+
+    void markDeleted();
+
+    bool isDeleted() const;
+
+    bool isDirectory() const;
 };
 
 

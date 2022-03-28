@@ -4,14 +4,11 @@
 
 #include "ContinuousFileDescriptor.h"
 
-ContinuousFileDescriptor::ContinuousFileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace) : directory(directory),
+ContinuousFileDescriptor::ContinuousFileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace) : FileDescriptor(directory),
                                                                                                                                           startingBlock(startingBlock),
                                                                                                                                           blocksReserved(blocksReserved),
                                                                                                                                           usedSpace(usedSpace){}
 
-bool ContinuousFileDescriptor::isDirectory() const {
-    return directory;
-}
 
 unsigned int ContinuousFileDescriptor::getStartingBlock() const {
     return startingBlock;

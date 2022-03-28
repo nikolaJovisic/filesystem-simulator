@@ -14,12 +14,9 @@ protected:
     unsigned startingBlock;
     unsigned blocksReserved;
     unsigned usedSpace;
-    bool directory;
 
 public:
     ContinuousFileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace);
-
-    [[nodiscard]] bool isDirectory() const;
 
     [[nodiscard]] unsigned int getStartingBlock() const;
 
