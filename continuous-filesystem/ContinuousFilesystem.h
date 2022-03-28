@@ -15,7 +15,7 @@
 class ContinuousFilesystem : public Filesystem<OpenedContinuousFileDescriptor> {
 private:
     OccupationMap occupationMap;
-    DescriptorManager descriptorManager;
+    DescriptorManager<ContinuousFileDescriptor> descriptorManager;
 public:
     enum MountType {
         STANDARD_MOUNT

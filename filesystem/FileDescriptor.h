@@ -10,14 +10,14 @@ class FileDescriptor {
 protected:
     bool deleted;
     bool directory;
-    FileDescriptor(bool directory);
+    explicit FileDescriptor(bool directory);
 public:
 
     void markDeleted();
 
-    bool isDeleted() const;
+    [[nodiscard]] bool isDeleted() const;
 
-    bool isDirectory() const;
+    [[nodiscard]] bool isDirectory() const;
 };
 
 
