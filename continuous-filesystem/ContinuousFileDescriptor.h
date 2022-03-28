@@ -7,14 +7,14 @@
 
 
 #include <ostream>
+#include "../filesystem/FileDescriptor.h"
 
-class ContinuousFileDescriptor {
+class ContinuousFileDescriptor : public FileDescriptor {
 protected:
     unsigned startingBlock;
     unsigned blocksReserved;
     unsigned usedSpace;
     bool directory;
-    bool deleted;
 
 public:
     ContinuousFileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace);
@@ -30,8 +30,6 @@ public:
     void setUsedSpace(unsigned int usedSpace);
 
     void setBlocksReserved(unsigned int blocksReserved);
-
-    void markDeleted();
 
     friend std::ostream &operator<<(std::ostream &os, const ContinuousFileDescriptor &descriptor);
 
