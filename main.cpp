@@ -103,15 +103,14 @@ void demo(Filesystem& fs) {
 
 
 int main() {
+    PersistentStorage psFormat(10000, 128);
+    ContinuousFilesystem cfsFormat(psFormat, ContinuousFilesystem::STANDARD_FORMAT);
+    cfsFormat.serializeInFile("demo.cfs");
 
-    PersistentStorage persistentStorage(10000, 128);
-    ContinuousFilesystem cfs(persistentStorage);
-    cfs.serializeInFile("demo.cfs");
+    PersistentStorage psMount("demo.cfs");
+    ContinuousFilesystem cfsMount(psMount, ContinuousFilesystem::STANDARD_MOUNT);
 
-    PersistentStorage ps("demo.cfs");
-    ContinuousFilesystem cfs2(ps, ContinuousFilesystem::BACK);
-
-    demo(cfs2);
+    demo(cfsMount);
 }
 
 

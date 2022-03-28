@@ -18,11 +18,11 @@ private:
     DescriptorManager descriptorManager;
 public:
     enum MountType {
-        BACK
+        STANDARD_MOUNT
     };
 
     enum FormatType {
-        STANDARD
+        STANDARD_FORMAT
     };
 
     explicit ContinuousFilesystem(PersistentStorage &persistentStorage, FormatType formatType);
