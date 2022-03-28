@@ -75,13 +75,20 @@ void ContinuousFilesystem::removeFromRecord(const std::string &path, int index) 
     descriptorManager.updateDescriptor(index, descriptor);
 }
 
+void ContinuousFilesystem::readRaw(FileDescriptor& fileDescriptor, char *dst, unsigned int size) {
+    OpenedContinuousFileDescriptor descriptor = dynamic_cast<OpenedContinuousFileDescriptor&>(fileDescriptor);
+    if (descriptor.getPosition() + size > descriptor.getUsedSpace()) throw std::runtime_error("Reading out of bounds.");
+    PersistentStorageController::read(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), dst, size);
+}
+
 void ContinuousFilesystem::read(unsigned int index, char *dst, unsigned int size) {
     if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
     auto& descriptor = openedFiles.at(index);
-    if (descriptor.getPosition() + size > descriptor.getUsedSpace()) throw std::runtime_error("Reading out of bounds.");
-    PersistentStorageController::read(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), dst, size);
+    readRaw(descriptor, dst, size);
     descriptor.setPosition(descriptor.getPosition() + size);
 }
+
+
 
 void ContinuousFilesystem::write(unsigned int index, char *src, unsigned int size) {
     if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
@@ -155,29 +162,29 @@ unsigned ContinuousFilesystem::getLastDirectoryIndex(unsigned startingDirectoryI
 }
 
 Directory ContinuousFilesystem::getDirectory(unsigned directoryIndex) {
-    ContinuousFileDescriptor directoryDescriptor = descriptorManager.getDescriptor(directoryIndex);
+    ContinuousFileDescriptor descriptor = descriptorManager.getDescriptor(directoryIndex);
 
-    if (!directoryDescriptor.isDirectory()) throw std::invalid_argument("File is not a directory.");
+    if (!descriptor.isDirectory()) throw std::invalid_argument("File is not a directory.");
 
-    unsigned startingBlock = directoryDescriptor.getStartingBlock();
-    unsigned directoryLength = directoryDescriptor.getUsedSpace();
+    unsigned size = descriptor.getUsedSpace();
 
-    char directoryContent[directoryDescriptor.getBlocksReserved() * persistentStorage.blockSize()];
-    PersistentStorageController::read(persistentStorage, startingBlock, 0, directoryContent, directoryLength);
-    return Directory(directoryContent, directoryLength);
+    char directoryContent[descriptor.getBlocksReserved() * persistentStorage.blockSize()];
+    OpenedContinuousFileDescriptor openedDescriptor(descriptor);
+    readRaw(openedDescriptor, directoryContent, size);
+    return Directory(directoryContent, size);
 }
 
 void ContinuousFilesystem::saveDirectory(Directory directory, unsigned directoryIndex) {
-    ContinuousFileDescriptor directoryDescriptor = descriptorManager.getDescriptor(directoryIndex);
+    ContinuousFileDescriptor descriptor = descriptorManager.getDescriptor(directoryIndex);
 
-    if (directory.size() > directoryDescriptor.getBlocksReserved() * persistentStorage.blockSize()) throw std::runtime_error("Directory size surpasses maximum.");
+    if (directory.size() > descriptor.getBlocksReserved() * persistentStorage.blockSize()) throw std::runtime_error("Directory size surpasses maximum.");
 
     char directoryContent[directory.size()];
     directory.serialize(directoryContent);
-    PersistentStorageController::write(persistentStorage, directoryDescriptor.getStartingBlock(), 0, directoryContent, directory.size());
+    PersistentStorageController::write(persistentStorage, descriptor.getStartingBlock(), 0, directoryContent, directory.size());
 
-    directoryDescriptor.setUsedSpace(directory.size());
-    descriptorManager.updateDescriptor(directoryIndex, directoryDescriptor);
+    descriptor.setUsedSpace(directory.size());
+    descriptorManager.updateDescriptor(directoryIndex, descriptor);
 }
 
 void ContinuousFilesystem::printState() {
@@ -199,6 +206,7 @@ void ContinuousFilesystem::persistMetadata() {
     descriptorManager.serializeInMemory(writingPointer);
     PersistentStorageController::write(persistentStorage, metadataStartingBlock, 0, metadata, metadataLength);
 }
+
 
 
 

@@ -54,6 +54,9 @@ private:
     void saveDirectory(Directory directory, unsigned directoryIndex) override;
 
     void removeFromRecord(const std::string &path, int index);
+
+protected:
+    void readRaw(FileDescriptor& fileDescriptor, char *dst, unsigned int size) override;
 };
 
 

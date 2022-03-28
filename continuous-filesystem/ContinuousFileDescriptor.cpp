@@ -7,8 +7,7 @@
 ContinuousFileDescriptor::ContinuousFileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace) : directory(directory),
                                                                                                                                           startingBlock(startingBlock),
                                                                                                                                           blocksReserved(blocksReserved),
-                                                                                                                                          usedSpace(usedSpace),
-                                                                                                                                          deleted(false){}
+                                                                                                                                          usedSpace(usedSpace){}
 
 bool ContinuousFileDescriptor::isDirectory() const {
     return directory;
@@ -41,9 +40,6 @@ void ContinuousFileDescriptor::setBlocksReserved(unsigned int blocksReserved) {
     ContinuousFileDescriptor::blocksReserved = blocksReserved;
 }
 
-void ContinuousFileDescriptor::markDeleted() {
-    ContinuousFileDescriptor::deleted = true;
-}
 
 
 
