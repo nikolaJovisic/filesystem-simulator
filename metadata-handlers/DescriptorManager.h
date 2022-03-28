@@ -26,7 +26,6 @@ public:
     DescriptorManager(PersistentStorage &persistentStorage) : persistentStorage(persistentStorage) {
     }
 
-
     unsigned addDescriptor(FileDescriptorType fileDescriptor) {
         if (descriptorCount == blocksAvailable * descriptorsPerBlock) {
             throw std::runtime_error("Out of descriptor dedicated memory.");
