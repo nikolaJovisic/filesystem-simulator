@@ -75,14 +75,12 @@ void ContinuousFilesystem::removeFromRecord(const std::string &path, int index) 
     descriptorManager.updateDescriptor(index, descriptor);
 }
 
-void ContinuousFilesystem::readRaw(FileDescriptor& fileDescriptor, char *dst, unsigned int size) {
-    OpenedContinuousFileDescriptor descriptor = dynamic_cast<OpenedContinuousFileDescriptor&>(fileDescriptor);
+void ContinuousFilesystem::readRaw(OpenedContinuousFileDescriptor& descriptor, char *dst, unsigned int size) {
     if (descriptor.getPosition() + size > descriptor.getUsedSpace()) throw std::runtime_error("Reading out of bounds.");
     PersistentStorageController::read(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), dst, size);
 }
 
-void ContinuousFilesystem::writeRaw(FileDescriptor& fileDescriptor, char *src, unsigned int size) {
-    OpenedContinuousFileDescriptor descriptor = dynamic_cast<OpenedContinuousFileDescriptor&>(fileDescriptor);
+void ContinuousFilesystem::writeRaw(OpenedContinuousFileDescriptor& descriptor, char *src, unsigned int size) {
     if (descriptor.getPosition() + size > descriptor.getBlocksReserved() * persistentStorage.blockSize()) throw std::runtime_error("Out of reserved memory.");
     PersistentStorageController::write(persistentStorage, descriptor.getStartingBlock(), descriptor.getPosition(), src, size);
 }

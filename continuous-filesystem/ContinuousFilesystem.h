@@ -12,7 +12,7 @@
 
 #include <deque>
 
-class ContinuousFilesystem : public Filesystem {
+class ContinuousFilesystem : public Filesystem<OpenedContinuousFileDescriptor> {
 private:
     OccupationMap occupationMap;
     DescriptorManager descriptorManager;
@@ -61,9 +61,9 @@ private:
     void removeFromRecord(const std::string &path, int index);
 
 protected:
-    void readRaw(FileDescriptor& fileDescriptor, char *dst, unsigned int size) override;
+    void readRaw(OpenedContinuousFileDescriptor &descriptor, char *dst, unsigned int size) override;
 
-    void writeRaw(FileDescriptor &fileDescriptor, char *src, unsigned int size) override;
+    void writeRaw(OpenedContinuousFileDescriptor &descriptor, char *src, unsigned int size) override;
 };
 
 

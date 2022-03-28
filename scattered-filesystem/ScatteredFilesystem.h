@@ -8,7 +8,7 @@
 
 #include "../filesystem/Filesystem.h"
 
-class ScatteredFilesystem : public Filesystem {
+class ScatteredFilesystem : public Filesystem<OpenedContinuousFileDescriptor> {
 public:
     int open(std::string path) override;
 
