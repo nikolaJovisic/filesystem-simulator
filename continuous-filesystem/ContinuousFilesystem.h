@@ -20,7 +20,12 @@ public:
     enum MountType {
         BACK
     };
-    explicit ContinuousFilesystem(PersistentStorage &persistentStorage);
+
+    enum FormatType {
+        STANDARD
+    };
+
+    explicit ContinuousFilesystem(PersistentStorage &persistentStorage, FormatType formatType);
 
     explicit ContinuousFilesystem(PersistentStorage &persistentStorage, MountType mountType);
 

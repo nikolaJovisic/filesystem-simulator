@@ -109,7 +109,7 @@ void ContinuousFilesystem::seek(unsigned int index, unsigned int position) {
     descriptor.setPosition(position);
 }
 
-ContinuousFilesystem::ContinuousFilesystem(PersistentStorage &persistentStorage) : Filesystem(
+ContinuousFilesystem::ContinuousFilesystem(PersistentStorage &persistentStorage, FormatType formatType) : Filesystem(
         persistentStorage),
                                                                                    occupationMap(
                                                                                            persistentStorage.getNumberOfBlocks() *
