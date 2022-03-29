@@ -20,6 +20,7 @@ public:
     void setPosition(unsigned int position);
 
     friend std::ostream &operator<<(std::ostream &os, const OpenedScatteredFileDescriptor &descriptor);
+
 };
 
 

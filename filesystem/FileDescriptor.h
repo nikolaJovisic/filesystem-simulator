@@ -6,6 +6,8 @@
 #define FILESYSTEM_SIMULATOR_FILEDESCRIPTOR_H
 
 
+#include <ostream>
+
 class FileDescriptor {
 protected:
     bool deleted;
@@ -18,6 +20,8 @@ public:
     [[nodiscard]] bool isDeleted() const;
 
     [[nodiscard]] bool isDirectory() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const FileDescriptor &descriptor);
 };
 
 

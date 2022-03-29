@@ -16,8 +16,7 @@ void OpenedScatteredFileDescriptor::setPosition(unsigned int position) {
     OpenedScatteredFileDescriptor::position = position;
 }
 
-
 std::ostream &operator<<(std::ostream &os, const OpenedScatteredFileDescriptor &descriptor) {
-    os << "NOT_IMPLEMENTED " << "position: " << descriptor.position;
+    os << static_cast<const ScatteredFileDescriptor &>(descriptor) << " position: " << descriptor.position;
     return os;
 }

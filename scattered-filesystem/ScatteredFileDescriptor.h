@@ -6,6 +6,7 @@
 #define FILESYSTEM_SIMULATOR_SCATTEREDFILEDESCRIPTOR_H
 
 
+#include <ostream>
 #include "../filesystem/FileDescriptor.h"
 #include "../filesystem/Constants.h"
 
@@ -15,6 +16,8 @@ private:
     unsigned size;
 public:
     explicit ScatteredFileDescriptor(bool directory);
+
+    friend std::ostream &operator<<(std::ostream &os, const ScatteredFileDescriptor &descriptor);
 };
 
 
