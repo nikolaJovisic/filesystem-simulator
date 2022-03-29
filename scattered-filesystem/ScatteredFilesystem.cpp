@@ -45,11 +45,18 @@ void ScatteredFilesystem::create(std::string path, bool isDirectory, unsigned in
 }
 
 void ScatteredFilesystem::read(unsigned int index, char *dst, unsigned int size) {
-
+    if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
+    auto &descriptor = openedFiles.at(index);
+    readRaw(descriptor, dst, size);
+    descriptor.setPosition(descriptor.getPosition() + size);
 }
 
 void ScatteredFilesystem::write(unsigned int index, char *src, unsigned int size) {
-
+    if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
+    auto &descriptor = openedFiles.at(index);
+    writeRaw(descriptor, src, size);
+    descriptor.setPosition(descriptor.getPosition() + size);
+    descriptor.setSize(std::max(descriptor.getSize(), descriptor.getPosition()));
 }
 
 void ScatteredFilesystem::seek(unsigned int index, unsigned int position) {
@@ -60,8 +67,17 @@ void ScatteredFilesystem::seek(unsigned int index, unsigned int position) {
     descriptor.setPosition(position);
 }
 
-void ScatteredFilesystem::remove(std::string path) {
+void ScatteredFilesystem::removeFromRecord(std::string &path, int index) {
 
+}
+
+void ScatteredFilesystem::remove(std::string path) {
+    auto index = open(path);
+    removeFromRecord(path, index);
+    auto directories = PathTransform::filePathDirectories(path);
+    auto fileName = PathTransform::filePathFile(path);
+    removeFromDirectory(directories, fileName);
+    openedFiles.erase(index);
 }
 
 void ScatteredFilesystem::readRaw(OpenedScatteredFileDescriptor &descriptor, char *dst, unsigned int size) {
@@ -144,5 +160,7 @@ ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
     readingPointer += occupationMap.serializationSize();
     descriptorManager.loadFrom(readingPointer);
 }
+
+
 
 

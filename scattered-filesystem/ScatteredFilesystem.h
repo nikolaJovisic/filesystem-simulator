@@ -16,10 +16,17 @@ class ScatteredFilesystem : public Filesystem<OpenedScatteredFileDescriptor> {
 private:
     OccupationMap occupationMap;
     DescriptorManager<ScatteredFileDescriptor> descriptorManager;
+
     void readRaw(OpenedScatteredFileDescriptor &descriptor, char *dst, unsigned int size) override;
+
     void writeRaw(OpenedScatteredFileDescriptor &descriptor, char *src, unsigned int size) override;
+
     Directory getDirectory(unsigned int directoryIndex) override;
+
     void saveDirectory(Directory directory, unsigned int directoryIndex) override;
+
+    void removeFromRecord(std::string &path, int index);
+
 public:
     enum MountType {
         STANDARD_MOUNT
@@ -50,7 +57,6 @@ public:
     void persistMetadata() override;
 
     void printState() override;
-
 };
 
 
