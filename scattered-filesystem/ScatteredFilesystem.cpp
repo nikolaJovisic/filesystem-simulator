@@ -80,8 +80,9 @@ ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
                                                                                                persistentStorage,
                                                                                                persistentStorage.getNumberOfBlocks() *
                                                                                                DESCRIPTORS_MEMORY_SHARE) {
-    ScatteredFileDescriptor rootDirectoryDescriptor = ScatteredFileDescriptor(true);
-    descriptorManager.addDescriptor(rootDirectoryDescriptor);
+    auto rootDirectoryDescriptor = ScatteredFileDescriptor(true);
+    auto rootIndex = descriptorManager.addDescriptor(rootDirectoryDescriptor);
+    if (rootIndex != 0) throw std::runtime_error("Error in formatting.");
 }
 
 ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
