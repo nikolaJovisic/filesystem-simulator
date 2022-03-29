@@ -53,7 +53,11 @@ void ScatteredFilesystem::write(unsigned int index, char *src, unsigned int size
 }
 
 void ScatteredFilesystem::seek(unsigned int index, unsigned int position) {
-
+    if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
+    auto &descriptor = openedFiles.at(index);
+    if (position > descriptor.getSize())
+        throw std::invalid_argument("Position surpasses file size.");
+    descriptor.setPosition(position);
 }
 
 void ScatteredFilesystem::remove(std::string path) {
