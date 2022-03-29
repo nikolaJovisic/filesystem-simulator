@@ -135,31 +135,13 @@ ContinuousFilesystem::ContinuousFilesystem(PersistentStorage &persistentStorage,
     descriptorManager.loadFrom(readingPointer);
 }
 
-void ContinuousFilesystem::addToDirectory(std::deque<std::string>& directories, std::string fileName,
-                                          unsigned int fileIndex) {
-    auto directoryIndex = getLastDirectoryIndex(0, directories);
-    auto directory = getDirectory(directoryIndex);
-    directory.addFile(fileName, fileIndex);
-    saveDirectory(directory, directoryIndex);
-}
+
 
 void ContinuousFilesystem::removeFromDirectory(std::deque<std::string>& directories, std::string fileName) {
     auto directoryIndex = getLastDirectoryIndex(0, directories);
     auto directory = getDirectory(directoryIndex);
     directory.removeFile(fileName);
     saveDirectory(directory, directoryIndex);
-}
-
-unsigned ContinuousFilesystem::getLastDirectoryIndex(unsigned startingDirectoryIndex, std::deque<std::string> &directories) {
-    if (directories.empty()) return startingDirectoryIndex;
-
-    Directory directory = getDirectory(startingDirectoryIndex);
-
-    auto index = directory.getIndex(directories.front());
-    directories.pop_front();
-    getLastDirectoryIndex(index, directories);
-
-    return getLastDirectoryIndex(index, directories);
 }
 
 Directory ContinuousFilesystem::getDirectory(unsigned directoryIndex) {
@@ -178,10 +160,10 @@ Directory ContinuousFilesystem::getDirectory(unsigned directoryIndex) {
 void ContinuousFilesystem::saveDirectory(Directory directory, unsigned directoryIndex) {
     ContinuousFileDescriptor descriptor = descriptorManager.getDescriptor(directoryIndex);
 
-    if (directory.size() > descriptor.getBlocksReserved() * persistentStorage.blockSize()) throw std::runtime_error("Directory size surpasses maximum.");
-
     char directoryContent[directory.size()];
     directory.serialize(directoryContent);
+    OpenedContinuousFileDescriptor openedDescriptor(descriptor);
+    writeRaw(openedDescriptor, directoryContent, directory.size());
     PersistentStorageController::write(persistentStorage, descriptor.getStartingBlock(), 0, directoryContent, directory.size());
 
     descriptor.setUsedSpace(directory.size());

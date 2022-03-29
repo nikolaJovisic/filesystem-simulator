@@ -1,4 +1,3 @@
-#include <iostream>
 #include "../persistent-storage/PersistentStorage.h"
 #include "../metadata-handlers/OccupationMap.h"
 #include "../metadata-handlers/DescriptorManager.h"
@@ -9,9 +8,9 @@
 using namespace std;
 
 int main() {
-    PersistentStorage psFormat(10000, 128);
-    ContinuousFilesystem cfsFormat(psFormat, ContinuousFilesystem::STANDARD_FORMAT);
-    cfsFormat.serializeInFile("cfsDemo.cfs");
+    //PersistentStorage psFormat(10000, 128);
+    //ContinuousFilesystem cfsFormat(psFormat, ContinuousFilesystem::STANDARD_FORMAT);
+    //cfsFormat.serializeInFile("cfsDemo.cfs");
 
     PersistentStorage psMount("cfsDemo.cfs");
     ContinuousFilesystem cfsMount(psMount, ContinuousFilesystem::STANDARD_MOUNT);

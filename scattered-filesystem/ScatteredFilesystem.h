@@ -7,9 +7,28 @@
 
 
 #include "../filesystem/Filesystem.h"
+#include "../metadata-handlers/OccupationMap.h"
+#include "../metadata-handlers/DescriptorManager.h"
+#include "ScatteredFileDescriptor.h"
+#include "OpenedScatteredFileDescriptor.h"
 
-class ScatteredFilesystem : public Filesystem<OpenedContinuousFileDescriptor> {
+class ScatteredFilesystem : public Filesystem<OpenedScatteredFileDescriptor> {
+private:
+    OccupationMap occupationMap;
+    DescriptorManager<ScatteredFileDescriptor> descriptorManager;
 public:
+    enum MountType {
+        STANDARD_MOUNT
+    };
+
+    enum FormatType {
+        STANDARD_FORMAT
+    };
+
+    explicit ScatteredFilesystem(PersistentStorage &persistentStorage, FormatType formatType);
+
+    explicit ScatteredFilesystem(PersistentStorage &persistentStorage, MountType mountType);
+
     int open(std::string path) override;
 
     void close(unsigned int index) override;

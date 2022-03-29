@@ -3,11 +3,6 @@
 //
 
 #include "Demo.h"
-#include "../persistent-storage/PersistentStorage.h"
-#include "../metadata-handlers/OccupationMap.h"
-#include "../metadata-handlers/DescriptorManager.h"
-#include "../filesystem/Directory.h"
-#include "../continuous-filesystem/ContinuousFilesystem.h"
 
 void Demo::cfsDemo(ContinuousFilesystem& fs) {
     std::cout<<"**********************************"<<std::endl;

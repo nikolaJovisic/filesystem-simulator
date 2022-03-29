@@ -50,11 +50,7 @@ private:
 
     Directory getDirectory(unsigned directoryIndex) override;
 
-    void addToDirectory(std::deque<std::string>& directories, std::string fileName, unsigned fileIndex);
-
     void removeFromDirectory(std::deque<std::string> &directories, std::string fileName);
-
-    unsigned getLastDirectoryIndex(unsigned startingDirectoryIndex, std::deque<std::string> &directories);
 
     void saveDirectory(Directory directory, unsigned directoryIndex) override;
 

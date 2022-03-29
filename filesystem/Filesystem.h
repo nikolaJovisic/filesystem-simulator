@@ -11,6 +11,7 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <deque>
 
 template<class OpenedFileDescriptorType>
 class Filesystem {
@@ -33,6 +34,26 @@ public:
 
     explicit Filesystem(PersistentStorage &persistentStorage) : persistentStorage(
             persistentStorage) {}
+
+    unsigned getLastDirectoryIndex(unsigned startingDirectoryIndex, std::deque<std::string> &directories) {
+        if (directories.empty()) return startingDirectoryIndex;
+
+        Directory directory = getDirectory(startingDirectoryIndex);
+
+        auto index = directory.getIndex(directories.front());
+        directories.pop_front();
+        getLastDirectoryIndex(index, directories);
+
+        return getLastDirectoryIndex(index, directories);
+    }
+
+    void addToDirectory(std::deque<std::string>& directories, std::string fileName,
+                                              unsigned int fileIndex) {
+        auto directoryIndex = getLastDirectoryIndex(0, directories);
+        auto directory = getDirectory(directoryIndex);
+        directory.addFile(fileName, fileIndex);
+        saveDirectory(directory, directoryIndex);
+    }
 
     virtual void printState() {
         std::cout<<"-------------------"<<std::endl;

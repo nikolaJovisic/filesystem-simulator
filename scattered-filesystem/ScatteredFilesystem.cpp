@@ -47,3 +47,15 @@ Directory ScatteredFilesystem::getDirectory(unsigned int directoryIndex) {
 void ScatteredFilesystem::saveDirectory(Directory directory, unsigned int directoryIndex) {
 
 }
+
+ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
+                                         ScatteredFilesystem::FormatType formatType) : Filesystem<OpenedScatteredFileDescriptor>(persistentStorage),
+                                                                                       descriptorManager(persistentStorage) {
+
+}
+
+ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
+                                         ScatteredFilesystem::MountType mountType) : Filesystem<OpenedScatteredFileDescriptor>(persistentStorage),
+                                                                                     descriptorManager(persistentStorage) {
+
+}
