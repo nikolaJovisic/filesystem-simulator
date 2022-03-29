@@ -3,3 +3,7 @@
 //
 
 #include "ScatteredFileDescriptor.h"
+
+ScatteredFileDescriptor::ScatteredFileDescriptor(bool directory) : FileDescriptor(directory) {
+    size = 0;
+}

@@ -59,3 +59,11 @@ ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
                                                                                      descriptorManager(persistentStorage) {
 
 }
+
+void ScatteredFilesystem::readRaw(OpenedScatteredFileDescriptor &descriptor, char *dst, unsigned int size) {
+
+}
+
+void ScatteredFilesystem::writeRaw(OpenedScatteredFileDescriptor &descriptor, char *src, unsigned int size) {
+
+}

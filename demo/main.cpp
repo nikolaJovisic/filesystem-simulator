@@ -16,6 +16,7 @@ int main() {
     ContinuousFilesystem cfsMount(psMount, ContinuousFilesystem::STANDARD_MOUNT);
 
     Demo::cfsDemo(cfsMount);
+
 }
 
 
