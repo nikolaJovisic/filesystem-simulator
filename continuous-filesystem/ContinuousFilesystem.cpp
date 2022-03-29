@@ -135,15 +135,6 @@ ContinuousFilesystem::ContinuousFilesystem(PersistentStorage &persistentStorage,
     descriptorManager.loadFrom(readingPointer);
 }
 
-
-
-void ContinuousFilesystem::removeFromDirectory(std::deque<std::string>& directories, std::string fileName) {
-    auto directoryIndex = getLastDirectoryIndex(0, directories);
-    auto directory = getDirectory(directoryIndex);
-    directory.removeFile(fileName);
-    saveDirectory(directory, directoryIndex);
-}
-
 Directory ContinuousFilesystem::getDirectory(unsigned directoryIndex) {
     ContinuousFileDescriptor descriptor = descriptorManager.getDescriptor(directoryIndex);
 

@@ -50,8 +50,6 @@ private:
 
     Directory getDirectory(unsigned directoryIndex) override;
 
-    void removeFromDirectory(std::deque<std::string> &directories, std::string fileName);
-
     void saveDirectory(Directory directory, unsigned directoryIndex) override;
 
     void removeFromRecord(const std::string &path, int index);

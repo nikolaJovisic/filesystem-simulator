@@ -55,6 +55,13 @@ public:
         saveDirectory(directory, directoryIndex);
     }
 
+    void removeFromDirectory(std::deque<std::string>& directories, std::string fileName) {
+        auto directoryIndex = getLastDirectoryIndex(0, directories);
+        auto directory = getDirectory(directoryIndex);
+        directory.removeFile(fileName);
+        saveDirectory(directory, directoryIndex);
+    }
+
     virtual void printState() {
         std::cout<<"-------------------"<<std::endl;
         std::cout<<"PERSISTENT STORAGE:"<<std::endl;
