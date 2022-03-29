@@ -13,3 +13,11 @@ std::ostream &operator<<(std::ostream &os, const ScatteredFileDescriptor &descri
        << descriptor.size;
     return os;
 }
+
+unsigned int ScatteredFileDescriptor::getSize() const {
+    return size;
+}
+
+void ScatteredFileDescriptor::setSize(unsigned int size) {
+    ScatteredFileDescriptor::size = size;
+}

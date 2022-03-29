@@ -10,7 +10,7 @@
 #include "../filesystem/FileDescriptor.h"
 #include "../filesystem/Constants.h"
 
-class ScatteredFileDescriptor : FileDescriptor {
+class ScatteredFileDescriptor : public FileDescriptor {
 private:
     int tableSlices[TABLE_SLICES_SIZE];
     unsigned size;
@@ -18,6 +18,10 @@ public:
     explicit ScatteredFileDescriptor(bool directory);
 
     friend std::ostream &operator<<(std::ostream &os, const ScatteredFileDescriptor &descriptor);
+
+    unsigned int getSize() const;
+
+    void setSize(unsigned int size);
 };
 
 

@@ -4,6 +4,7 @@
 
 #include "ScatteredFilesystem.h"
 #include "../filesystem/PathTransform.h"
+#include "../persistent-storage/PersistentStorageController.h"
 
 int ScatteredFilesystem::open(std::string path) {
 
@@ -30,11 +31,17 @@ int ScatteredFilesystem::open(std::string path) {
 }
 
 void ScatteredFilesystem::close(unsigned int index) {
-
+    if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
+    descriptorManager.updateDescriptor(index, openedFiles.at(index));
+    openedFiles.erase(index);
 }
 
 void ScatteredFilesystem::create(std::string path, bool isDirectory, unsigned int blocksReserved) {
-
+    auto fileDescriptor = ScatteredFileDescriptor(isDirectory);
+    unsigned fileIndex = descriptorManager.addDescriptor(fileDescriptor);
+    auto directories = PathTransform::filePathDirectories(path);
+    auto fileName = PathTransform::filePathFile(path);
+    addToDirectory(directories, fileName, fileIndex);
 }
 
 void ScatteredFilesystem::read(unsigned int index, char *dst, unsigned int size) {
@@ -53,20 +60,53 @@ void ScatteredFilesystem::remove(std::string path) {
 
 }
 
+void ScatteredFilesystem::readRaw(OpenedScatteredFileDescriptor &descriptor, char *dst, unsigned int size) {
+
+}
+
+void ScatteredFilesystem::writeRaw(OpenedScatteredFileDescriptor &descriptor, char *src, unsigned int size) {
+
+}
+
 void ScatteredFilesystem::printState() {
     Filesystem::printState();
 }
 
 void ScatteredFilesystem::persistMetadata() {
-
+    unsigned metadataLength = NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA * persistentStorage.blockSize();
+    unsigned metadataStartingBlock =
+            persistentStorage.getNumberOfBlocks() - NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA;
+    char metadata[metadataLength];
+    char *writingPointer = metadata;
+    occupationMap.serializeInMemory(writingPointer);
+    writingPointer += occupationMap.serializationSize();
+    descriptorManager.serializeInMemory(writingPointer);
+    PersistentStorageController::write(persistentStorage, metadataStartingBlock, 0, metadata, metadataLength);
 }
 
-Directory ScatteredFilesystem::getDirectory(unsigned int directoryIndex) {
-    return Directory();
+Directory ScatteredFilesystem::getDirectory(unsigned directoryIndex) {
+    auto descriptor = descriptorManager.getDescriptor(directoryIndex);
+
+    if (!descriptor.isDirectory()) throw std::invalid_argument("File is not a directory.");
+
+    unsigned size = descriptor.getSize();
+
+    char directoryContent[size];
+    OpenedScatteredFileDescriptor openedDescriptor(descriptor);
+    readRaw(openedDescriptor, directoryContent, size);
+    return Directory(directoryContent, size);
 }
 
-void ScatteredFilesystem::saveDirectory(Directory directory, unsigned int directoryIndex) {
+void ScatteredFilesystem::saveDirectory(Directory directory, unsigned directoryIndex) {
+    auto descriptor = descriptorManager.getDescriptor(directoryIndex);
 
+    char directoryContent[directory.size()];
+    directory.serialize(directoryContent);
+    OpenedScatteredFileDescriptor openedDescriptor(descriptor);
+    writeRaw(openedDescriptor, directoryContent, directory.size());
+
+    descriptor.setSize(directory.size());
+    descriptorManager.updateDescriptor(directoryIndex, descriptor);
 }
 
 ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
@@ -87,15 +127,18 @@ ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
 
 ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
                                          ScatteredFilesystem::MountType mountType) : Filesystem(persistentStorage),
+                                                                                     occupationMap(),
                                                                                      descriptorManager(
                                                                                              persistentStorage) {
-
+    unsigned metadataLength = NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA * persistentStorage.blockSize();
+    unsigned metadataStartingBlock =
+            persistentStorage.getNumberOfBlocks() - NUMBER_OF_BLOCKS_RESERVED_FOR_FILESYSTEM_METADATA;
+    char metadata[metadataLength];
+    PersistentStorageController::read(persistentStorage, metadataStartingBlock, 0, metadata, metadataLength);
+    char *readingPointer = metadata;
+    occupationMap.loadFrom(readingPointer);
+    readingPointer += occupationMap.serializationSize();
+    descriptorManager.loadFrom(readingPointer);
 }
 
-void ScatteredFilesystem::readRaw(OpenedScatteredFileDescriptor &descriptor, char *dst, unsigned int size) {
 
-}
-
-void ScatteredFilesystem::writeRaw(OpenedScatteredFileDescriptor &descriptor, char *src, unsigned int size) {
-
-}

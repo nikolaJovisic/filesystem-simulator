@@ -164,9 +164,6 @@ void ContinuousFilesystem::saveDirectory(Directory directory, unsigned directory
     directory.serialize(directoryContent);
     OpenedContinuousFileDescriptor openedDescriptor(descriptor);
     writeRaw(openedDescriptor, directoryContent, directory.size());
-    PersistentStorageController::write(persistentStorage, descriptor.getStartingBlock(), 0, directoryContent,
-                                       directory.size());
-
     descriptor.setUsedSpace(directory.size());
     descriptorManager.updateDescriptor(directoryIndex, descriptor);
 }

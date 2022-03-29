@@ -12,16 +12,18 @@ class FileDescriptor {
 protected:
     bool deleted;
     bool directory;
+
     explicit FileDescriptor(bool directory);
+
 public:
 
     void markDeleted();
 
     [[nodiscard]] bool isDeleted() const;
 
-    [[nodiscard]] bool isDirectory() const;
-
     friend std::ostream &operator<<(std::ostream &os, const FileDescriptor &descriptor);
+
+    [[nodiscard]] bool isDirectory() const;
 };
 
 

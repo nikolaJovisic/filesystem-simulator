@@ -9,7 +9,7 @@
 #include "ScatteredFileDescriptor.h"
 #include <ostream>
 
-class OpenedScatteredFileDescriptor : ScatteredFileDescriptor {
+class OpenedScatteredFileDescriptor : public ScatteredFileDescriptor {
 private:
     unsigned position;
 public:
