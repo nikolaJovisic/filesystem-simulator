@@ -13,6 +13,7 @@ std::list<Slice> ScatteredFilesystem::getFirstReadSlices(unsigned block, unsigne
     auto blocksToRead = (startOffset + readSize) / blockSize +
                         (((startOffset + readSize) % blockSize != 0) ? 1 : 0);
     auto firstBlock = position / blockSize;
+    if (firstBlock >= tableBlockSize) return {};
     bool dataExcedesThisBlock = firstBlock + blocksToRead > tableBlockSize;
     auto blockNumsToRead = dataExcedesThisBlock ? tableBlockSize - firstBlock : blocksToRead;
     auto bytesInLastBlock = blockSize - (blockSize * blocksToRead - readSize - position % blockSize);

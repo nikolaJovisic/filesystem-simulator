@@ -35,9 +35,10 @@ private:
 
     void appendThirdReadSlices(std::list<Slice> &slices, unsigned block, unsigned position, unsigned int readSize);
 
-    std::list<Slice> getFirstReadSlices(unsigned block, unsigned position, unsigned int readSize);
 
 public:
+    std::list<Slice> getFirstReadSlices(unsigned block, unsigned position, unsigned int readSize);
+
     enum MountType {
         STANDARD_MOUNT
     };
