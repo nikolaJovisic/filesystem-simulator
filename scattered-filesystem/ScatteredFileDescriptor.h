@@ -12,7 +12,7 @@
 
 class ScatteredFileDescriptor : public FileDescriptor {
 private:
-    int tableSlices[TABLE_SLICES_SIZE];
+    int tableSlices[3];
     unsigned size;
 public:
     explicit ScatteredFileDescriptor(bool directory);
@@ -22,6 +22,9 @@ public:
     unsigned int getSize() const;
 
     void setSize(unsigned int size);
+
+    unsigned getBlock(unsigned block);
+
 };
 
 

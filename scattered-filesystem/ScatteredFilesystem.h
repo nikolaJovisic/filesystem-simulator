@@ -6,11 +6,13 @@
 #define FILESYSTEM_SIMULATOR_SCATTEREDFILESYSTEM_H
 
 
+#include <list>
 #include "../filesystem/Filesystem.h"
 #include "../metadata-handlers/OccupationMap.h"
 #include "../metadata-handlers/DescriptorManager.h"
 #include "ScatteredFileDescriptor.h"
 #include "OpenedScatteredFileDescriptor.h"
+#include "Slice.h"
 
 class ScatteredFilesystem : public Filesystem<OpenedScatteredFileDescriptor> {
 private:
@@ -26,6 +28,14 @@ private:
     void saveDirectory(Directory directory, unsigned int directoryIndex) override;
 
     void removeFromRecord(std::string &path, int index);
+
+    std::list<Slice> getReadSlices(OpenedScatteredFileDescriptor &descriptor, unsigned int readSize);
+
+    void appendSecondReadSlices(std::list<Slice> &slices, unsigned block, unsigned position, unsigned int readSize);
+
+    void appendThirdReadSlices(std::list<Slice> &slices, unsigned block, unsigned position, unsigned int readSize);
+
+    std::list<Slice> getFirstReadSlices(unsigned block, unsigned position, unsigned int readSize);
 
 public:
     enum MountType {

@@ -21,3 +21,9 @@ unsigned int ScatteredFileDescriptor::getSize() const {
 void ScatteredFileDescriptor::setSize(unsigned int size) {
     ScatteredFileDescriptor::size = size;
 }
+
+unsigned ScatteredFileDescriptor::getBlock(unsigned int block) {
+    return tableSlices[block];
+}
+
+
