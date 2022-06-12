@@ -10,7 +10,7 @@ using namespace std;
 
 int main() {
     PersistentStorage psFormat(10000, 128);
-    /*
+
     ContinuousFilesystem cfsFormat(psFormat, ContinuousFilesystem::STANDARD_FORMAT);
     cfsFormat.serializeInFile("cfsDemo.cfs");
 
@@ -18,9 +18,11 @@ int main() {
     ContinuousFilesystem cfsMount(psMount, ContinuousFilesystem::STANDARD_MOUNT);
 
     Demo::cfsDemo(cfsMount);
-    */
+    /*
     ScatteredFilesystem sfs(psFormat, ScatteredFilesystem::STANDARD_FORMAT);
+    sfs.create("/file.bin", false, 0);
     sfs.printState();
+     */
 }
 
 

@@ -6,17 +6,19 @@
 #include "../filesystem/PathTransform.h"
 #include "../persistent-storage/PersistentStorageController.h"
 
-std::list<Slice> ScatteredFilesystem::getFirstReadSlices(unsigned block, unsigned position, unsigned int readSize) {
+std::list<Slice>
+ScatteredFilesystem::indirectionLevel1Slices(unsigned block, unsigned position, unsigned int size) {
+    if (size == 0) return {};
     unsigned blockSize = persistentStorage.blockSize();
     auto tableBlockSize = blockSize / sizeof(unsigned);
     auto startOffset = position % blockSize;
-    auto blocksToRead = (startOffset + readSize) / blockSize +
-                        (((startOffset + readSize) % blockSize != 0) ? 1 : 0);
+    auto blocksToRead = (startOffset + size) / blockSize +
+                        (((startOffset + size) % blockSize != 0) ? 1 : 0);
     auto firstBlock = position / blockSize;
     if (firstBlock >= tableBlockSize) return {};
     bool dataExcedesThisBlock = firstBlock + blocksToRead > tableBlockSize;
     auto blockNumsToRead = dataExcedesThisBlock ? tableBlockSize - firstBlock : blocksToRead;
-    auto bytesInLastBlock = blockSize - (blockSize * blocksToRead - readSize - position % blockSize);
+    auto bytesInLastBlock = blockSize - (blockSize * blocksToRead - size - position % blockSize);
 
     unsigned blockNums[blockSize];
     PersistentStorageController::read(persistentStorage, block, firstBlock * sizeof(unsigned), (char *) blockNums,
@@ -39,23 +41,9 @@ std::list<Slice> ScatteredFilesystem::getFirstReadSlices(unsigned block, unsigne
     return retVal;
 }
 
-void ScatteredFilesystem::appendSecondReadSlices(std::list<Slice> &slices, unsigned block, unsigned position,
-                                                 unsigned int readSize) {
-
-}
-
-void ScatteredFilesystem::appendThirdReadSlices(std::list<Slice> &slices, unsigned block, unsigned position,
-                                                unsigned int readSize) {
-
-
-}
-
-std::list<Slice> ScatteredFilesystem::getReadSlices(OpenedScatteredFileDescriptor &descriptor,
-                                                    unsigned int readSize) {
-    auto slices = getFirstReadSlices(descriptor.getBlock(0), descriptor.getPosition(), readSize);
-    appendSecondReadSlices(slices, descriptor.getBlock(1), descriptor.getPosition(), readSize);
-    appendThirdReadSlices(slices, descriptor.getBlock(2), descriptor.getPosition(), readSize);
-    return slices;
+std::list<Slice> ScatteredFilesystem::getSlices(OpenedScatteredFileDescriptor &descriptor,
+                                                unsigned int size) {
+    return indirectionLevel1Slices(descriptor.getBlock(), descriptor.getPosition(), size);
 }
 
 int ScatteredFilesystem::open(std::string path) {
@@ -89,7 +77,7 @@ void ScatteredFilesystem::close(unsigned int index) {
 }
 
 void ScatteredFilesystem::create(std::string path, bool isDirectory, unsigned int blocksReserved) {
-    auto fileDescriptor = ScatteredFileDescriptor(isDirectory);
+    auto fileDescriptor = ScatteredFileDescriptor(isDirectory, occupationMap.occupy(1));
     unsigned fileIndex = descriptorManager.addDescriptor(fileDescriptor);
     auto directories = PathTransform::filePathDirectories(path);
     auto fileName = PathTransform::filePathFile(path);
@@ -134,11 +122,14 @@ void ScatteredFilesystem::remove(std::string path) {
 
 void ScatteredFilesystem::readRaw(OpenedScatteredFileDescriptor &descriptor, char *dst, unsigned int size) {
     if (descriptor.getPosition() + size > descriptor.getSize()) throw std::runtime_error("Reading out of bounds.");
-    auto readSlices = getReadSlices(descriptor, size);
+    auto readSlices = getSlices(descriptor, size);
 }
 
 void ScatteredFilesystem::writeRaw(OpenedScatteredFileDescriptor &descriptor, char *src, unsigned int size) {
-    if (descriptor.getPosition() + size > descriptor.getSize()) throw std::runtime_error("Out of reserved memory.");
+    if (descriptor.getPosition() + size > maxFilesize()) throw std::runtime_error("File size too large.");
+    if (descriptor.getPosition() + size > descriptor.getSize()) {
+        expandFile(descriptor, size);
+    }
 }
 
 void ScatteredFilesystem::printState() {
@@ -195,7 +186,8 @@ ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
                                                                                                DESCRIPTORS_MEMORY_SHARE) {
     if (persistentStorage.blockSize() % sizeof(unsigned) != 0)
         throw std::runtime_error("Block size must be divisible by sizeof(unsigned)");
-    auto rootDirectoryDescriptor = ScatteredFileDescriptor(true);
+    auto block = occupationMap.occupy(1);
+    auto rootDirectoryDescriptor = ScatteredFileDescriptor(true, block);
     auto rootIndex = descriptorManager.addDescriptor(rootDirectoryDescriptor);
     if (rootIndex != 0) throw std::runtime_error("Error in formatting.");
 }
@@ -216,6 +208,13 @@ ScatteredFilesystem::ScatteredFilesystem(PersistentStorage &persistentStorage,
     occupationMap.loadFrom(readingPointer);
     readingPointer += occupationMap.serializationSize();
     descriptorManager.loadFrom(readingPointer);
+}
+
+unsigned ScatteredFilesystem::maxFilesize() {
+    return persistentStorage.blockSize() / sizeof(unsigned) * persistentStorage.blockSize();
+}
+
+void ScatteredFilesystem::expandFile(OpenedScatteredFileDescriptor &descriptor, unsigned int size) {
 }
 
 

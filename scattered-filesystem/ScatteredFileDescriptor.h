@@ -12,10 +12,10 @@
 
 class ScatteredFileDescriptor : public FileDescriptor {
 private:
-    int tableSlices[3];
+    int block;
     unsigned size;
 public:
-    explicit ScatteredFileDescriptor(bool directory);
+    explicit ScatteredFileDescriptor(bool directory, unsigned block);
 
     friend std::ostream &operator<<(std::ostream &os, const ScatteredFileDescriptor &descriptor);
 
@@ -23,7 +23,7 @@ public:
 
     void setSize(unsigned int size);
 
-    unsigned getBlock(unsigned block);
+    unsigned getBlock();
 
 };
 

@@ -29,15 +29,13 @@ private:
 
     void removeFromRecord(std::string &path, int index);
 
-    std::list<Slice> getReadSlices(OpenedScatteredFileDescriptor &descriptor, unsigned int readSize);
+    std::list<Slice> indirectionLevel1Slices(unsigned block, unsigned position, unsigned int size);
 
-    void appendSecondReadSlices(std::list<Slice> &slices, unsigned block, unsigned position, unsigned int readSize);
+    std::list<Slice> getSlices(OpenedScatteredFileDescriptor &descriptor, unsigned int size);
 
-    void appendThirdReadSlices(std::list<Slice> &slices, unsigned block, unsigned position, unsigned int readSize);
-
+    unsigned maxFilesize();
 
 public:
-    std::list<Slice> getFirstReadSlices(unsigned block, unsigned position, unsigned int readSize);
 
     enum MountType {
         STANDARD_MOUNT
@@ -68,6 +66,8 @@ public:
     void persistMetadata() override;
 
     void printState() override;
+
+    void expandFile(OpenedScatteredFileDescriptor &descriptor, unsigned int size);
 };
 
 

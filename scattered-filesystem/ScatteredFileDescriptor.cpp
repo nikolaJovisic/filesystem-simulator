@@ -4,12 +4,13 @@
 
 #include "ScatteredFileDescriptor.h"
 
-ScatteredFileDescriptor::ScatteredFileDescriptor(bool directory) : FileDescriptor(directory) {
+ScatteredFileDescriptor::ScatteredFileDescriptor(bool directory, unsigned block) : FileDescriptor(directory) {
     size = 0;
+    this->block = block;
 }
 
 std::ostream &operator<<(std::ostream &os, const ScatteredFileDescriptor &descriptor) {
-    os << static_cast<const FileDescriptor &>(descriptor) << " tableSlices: " << descriptor.tableSlices << " size: "
+    os << static_cast<const FileDescriptor &>(descriptor) << " block: " << descriptor.block << " size: "
        << descriptor.size;
     return os;
 }
@@ -22,8 +23,8 @@ void ScatteredFileDescriptor::setSize(unsigned int size) {
     ScatteredFileDescriptor::size = size;
 }
 
-unsigned ScatteredFileDescriptor::getBlock(unsigned int block) {
-    return tableSlices[block];
+unsigned ScatteredFileDescriptor::getBlock() {
+    return block;
 }
 
 
