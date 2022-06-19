@@ -57,7 +57,6 @@ void ContinuousFilesystem::remove(std::string path) {
     auto directories = PathTransform::filePathDirectories(path);
     auto fileName = PathTransform::filePathFile(path);
     removeFromDirectory(directories, fileName);
-    openedFiles.erase(index);
 }
 
 void ContinuousFilesystem::removeFromRecord(const std::string &path, int index) {
@@ -70,6 +69,7 @@ void ContinuousFilesystem::removeFromRecord(const std::string &path, int index) 
         }
     }
     occupationMap.free(descriptor.getStartingBlock(), descriptor.getBlocksReserved());
+    openedFiles.erase(index);
     descriptor.markDeleted();
     descriptor.setUsedSpace(0);
     descriptorManager.updateDescriptor(index, descriptor);

@@ -111,6 +111,7 @@ void ScatteredFilesystem::shorten(unsigned int index, unsigned int bytesToTrim) 
     if (descriptor.isDirectory()) throw std::invalid_argument("Cannot shorten directory!");
     auto blocksUsed = (descriptor.getSize() + NUMBER_OF_BYTES_PER_BLOCK - 1) / NUMBER_OF_BYTES_PER_BLOCK;
     auto blocksToTrim = bytesToTrim / NUMBER_OF_BYTES_PER_BLOCK;
+    if (blocksToTrim > blocksUsed) throw std::invalid_argument("Cannot shorten that much!");
     for (int i = blocksUsed - blocksToTrim; i < blocksUsed; ++i) {
         occupationMap.free(descriptor.indirectionBlock.getBlock(i), 1);
     }
@@ -131,8 +132,11 @@ void ScatteredFilesystem::removeFromRecord(std::string &path, int index) {
     occupationMap.free(descriptor.getBlock(), 1);
     auto blocksUsed = (descriptor.getSize() + NUMBER_OF_BYTES_PER_BLOCK - 1) / NUMBER_OF_BYTES_PER_BLOCK;
     for (int i = 0; i < blocksUsed; ++i) {
-        occupationMap.free(descriptor.indirectionBlock.getBlock(i), 1);
+        auto b = descriptor.indirectionBlock.getBlock(i);
+        occupationMap.free(b, 1);
     }
+    descriptor.indirectionBlock.save(descriptor.getBlock());
+    openedFiles.erase(index);
     descriptor.markDeleted();
     descriptor.setSize(0);
     descriptorManager.updateDescriptor(index, descriptor);
@@ -144,7 +148,6 @@ void ScatteredFilesystem::remove(std::string path) {
     auto directories = PathTransform::filePathDirectories(path);
     auto fileName = PathTransform::filePathFile(path);
     removeFromDirectory(directories, fileName);
-    openedFiles.erase(index);
 }
 
 void ScatteredFilesystem::readRaw(OpenedScatteredFileDescriptor &descriptor, char *dst, unsigned int size) {
