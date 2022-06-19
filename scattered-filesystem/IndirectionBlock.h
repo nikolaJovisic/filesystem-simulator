@@ -5,17 +5,20 @@
 #ifndef FILESYSTEM_SIMULATOR_INDIRECTIONBLOCK_H
 #define FILESYSTEM_SIMULATOR_INDIRECTIONBLOCK_H
 
+#include "../filesystem/Constants.h"
+#include "../persistent-storage/PersistentStorageController.h"
 
 class IndirectionBlock {
-    unsigned number;
-    unsigned *blocks;
-    unsigned numOfBlocks;
+public:
+    unsigned blocks[UNSIGNEDS_PER_BLOCK];
 
-    void load();
+    void setBlock(unsigned index, unsigned value);
 
-    void save();
+    unsigned getBlock(unsigned index);
 
+    void load(unsigned number);
 
+    void save(unsigned number);
 };
 
 
