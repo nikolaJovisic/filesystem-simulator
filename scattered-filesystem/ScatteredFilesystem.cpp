@@ -105,8 +105,37 @@ void ScatteredFilesystem::seek(unsigned int index, unsigned int position) {
     descriptor.setPosition(position);
 }
 
-void ScatteredFilesystem::removeFromRecord(std::string &path, int index) {
+void ScatteredFilesystem::shorten(unsigned int index, unsigned int bytesToTrim) {
+    if (!openedFiles.contains(index)) throw std::invalid_argument("Invalid index.");
+    auto &descriptor = openedFiles.at(index);
+    if (descriptor.isDirectory()) throw std::invalid_argument("Cannot shorten directory!");
+    auto blocksUsed = (descriptor.getSize() + NUMBER_OF_BYTES_PER_BLOCK - 1) / NUMBER_OF_BYTES_PER_BLOCK;
+    auto blocksToTrim = bytesToTrim / NUMBER_OF_BYTES_PER_BLOCK;
+    for (int i = blocksUsed - blocksToTrim; i < blocksUsed; ++i) {
+        occupationMap.free(descriptor.indirectionBlock.getBlock(i), 1);
+    }
+    descriptor.setSize(descriptor.getSize() - bytesToTrim);
+    descriptor.indirectionBlock.save(descriptor.getBlock());
+    descriptorManager.updateDescriptor(index, descriptor);
+}
 
+void ScatteredFilesystem::removeFromRecord(std::string &path, int index) {
+    auto &descriptor = openedFiles.at(index);
+    if (descriptor.isDirectory()) {
+        auto directory = getDirectory(index);
+        for (const auto &filename: directory.getAllFilenames()) {
+            auto filePath = path + DELIMITER + filename;
+            removeFromRecord(filePath, open(filePath));
+        }
+    }
+    occupationMap.free(descriptor.getBlock(), 1);
+    auto blocksUsed = (descriptor.getSize() + NUMBER_OF_BYTES_PER_BLOCK - 1) / NUMBER_OF_BYTES_PER_BLOCK;
+    for (int i = 0; i < blocksUsed; ++i) {
+        occupationMap.free(descriptor.indirectionBlock.getBlock(i), 1);
+    }
+    descriptor.markDeleted();
+    descriptor.setSize(0);
+    descriptorManager.updateDescriptor(index, descriptor);
 }
 
 void ScatteredFilesystem::remove(std::string path) {
@@ -143,6 +172,10 @@ void ScatteredFilesystem::writeRaw(OpenedScatteredFileDescriptor &descriptor, ch
 
 void ScatteredFilesystem::printState() {
     Filesystem::printState();
+    std::cout << "FREE BLOCKS:" << std::endl;
+    occupationMap.print();
+    std::cout << "ALL DESCRIPTORS:" << std::endl;
+    descriptorManager.printAllDescriptors();
 }
 
 void ScatteredFilesystem::persistMetadata() {
@@ -242,6 +275,8 @@ void ScatteredFilesystem::expandIndirectionBlock(IndirectionBlock &indirectionBl
         indirectionBlock.setBlock(i, newBlock);
     }
 }
+
+
 
 
 

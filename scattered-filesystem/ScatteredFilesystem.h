@@ -35,6 +35,11 @@ private:
 
     unsigned maxFilesize();
 
+    void expandFile(OpenedScatteredFileDescriptor &descriptor, unsigned int size);
+
+    void
+    expandIndirectionBlock(IndirectionBlock &indirectionBlock, unsigned int blocksUsed, unsigned int blocksRequired);
+
 public:
 
     enum MountType {
@@ -63,14 +68,11 @@ public:
 
     void remove(std::string path) override;
 
+    void shorten(unsigned int index, unsigned int bytesToTrim);
+
     void persistMetadata() override;
 
     void printState() override;
-
-    void expandFile(OpenedScatteredFileDescriptor &descriptor, unsigned int size);
-
-    void
-    expandIndirectionBlock(IndirectionBlock &indirectionBlock, unsigned int blocksUsed, unsigned int blocksRequired);
 };
 
 
