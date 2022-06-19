@@ -8,8 +8,9 @@
 
 using namespace std;
 
-int main() {
+void cfs() {
     PersistentStorage psFormat(10000, 128);
+    PersistentStorageController::setDefaultPersistentStorage(&psFormat);
 
     ContinuousFilesystem cfsFormat(psFormat, ContinuousFilesystem::STANDARD_FORMAT);
     cfsFormat.serializeInFile("cfsDemo.cfs");
@@ -18,11 +19,23 @@ int main() {
     ContinuousFilesystem cfsMount(psMount, ContinuousFilesystem::STANDARD_MOUNT);
 
     Demo::cfsDemo(cfsMount);
-    /*
-    ScatteredFilesystem sfs(psFormat, ScatteredFilesystem::STANDARD_FORMAT);
-    sfs.create("/file.bin", false, 0);
-    sfs.printState();
-     */
+}
+
+void sfs() {
+    PersistentStorage psFormat(10000, 128);
+    PersistentStorageController::setDefaultPersistentStorage(&psFormat);
+
+    ScatteredFilesystem sfsFormat(psFormat, ScatteredFilesystem::STANDARD_FORMAT);
+    sfsFormat.serializeInFile("sfsDemo.cfs");
+
+    PersistentStorage psMount("sfsDemo.cfs");
+    ScatteredFilesystem sfsMount(psMount, ScatteredFilesystem::STANDARD_MOUNT);
+
+    Demo::sfsDemo(sfsMount);
+}
+
+int main() {
+    sfs();
 }
 
 
