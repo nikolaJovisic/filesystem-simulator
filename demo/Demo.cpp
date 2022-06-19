@@ -38,6 +38,30 @@ void Demo::cfsDemo(ContinuousFilesystem &fs) {
 
     fs.printState();
 
+    cfsWriteReadDemo(fs, index);
+
+    fs.printState();
+
+    fs.create("/f2.txt", false, 20);
+    fs.remove("/dir");
+
+    std::cout << "**********************************" << std::endl;
+    std::cout
+            << "Directory removed, its contents recursevly removed, occupation map space freed (now there are multiple fragments of free space), root directory contents listed."
+            << std::endl;
+
+    std::cout << "-------------------" << std::endl;
+    std::cout << "Root directory contents:" << std::endl;
+    fs.listContentsAt("/");
+    fs.printState();
+
+    fs.remove("/f2.txt");
+    std::cout << "**********************************" << std::endl;
+    std::cout << "File removed, occupation map space freed and merged with previous free space." << std::endl;
+    fs.printState();
+}
+
+void Demo::cfsWriteReadDemo(ContinuousFilesystem &fs, int index) {
     int src[100];
     int dst[100];
 
@@ -84,25 +108,6 @@ void Demo::cfsDemo(ContinuousFilesystem &fs) {
         std::cout << i << ".";
     }
     std::cout << std::endl;
-
-
-    fs.create("/f2.txt", false, 20);
-    fs.remove("/dir");
-
-    std::cout << "**********************************" << std::endl;
-    std::cout
-            << "Directory removed, its contents recursevly removed, occupation map space freed (now there are multiple fragments of free space), root directory contents listed."
-            << std::endl;
-
-    std::cout << "-------------------" << std::endl;
-    std::cout << "Root directory contents:" << std::endl;
-    fs.listContentsAt("/");
-    fs.printState();
-
-    fs.remove("/f2.txt");
-    std::cout << "**********************************" << std::endl;
-    std::cout << "File removed, occupation map space freed and merged with previous free space." << std::endl;
-    fs.printState();
 }
 
 void Demo::sfsDemo(ScatteredFilesystem &fs) {
@@ -116,7 +121,7 @@ void Demo::sfsDemo(ScatteredFilesystem &fs) {
 
     std::cout << "**********************************" << std::endl;
     std::cout
-            << "Files and directories created, memory allocated for directories with maps of access to their contents, and files themselves in both descriptors and occupation map, descriptors created."
+            << "Files and directories created, memory allocated for directories with maps of access to their contents, and files themselves, descriptors created. Root directory expanded to handle new files (new block allocated on its indirection block)."
             << std::endl;
 
     fs.printState();
@@ -139,14 +144,48 @@ void Demo::sfsDemo(ScatteredFilesystem &fs) {
 
     fs.printState();
 
-    int src[1000];
-    int dst[1000];
+    sfsWriteReadDemo(fs, index, 200);
 
-    for (int i = 0; i < 1000; ++i) {
+    fs.printState();
+
+    fs.remove("/dir");
+
+    std::cout << "**********************************" << std::endl;
+    std::cout
+            << "Directory removed, its contents recursevly removed, space freed, root directory contents listed."
+            << std::endl;
+
+    std::cout << "-------------------" << std::endl;
+    std::cout << "Root directory contents:" << std::endl;
+    fs.listContentsAt("/");
+    fs.printState();
+
+    fs.shorten(index, 600);
+    std::cout << "**********************************" << std::endl;
+    std::cout << "File shortened, space freed." << std::endl;
+    fs.printState();
+
+    fs.close(index);
+    std::cout << "**********************************" << std::endl;
+    std::cout << "File closed." << std::endl;
+    fs.printState();
+
+    fs.remove("/f0.txt");
+    std::cout << "**********************************" << std::endl;
+    std::cout << "File removed, space freed." << std::endl;
+
+    fs.printState();
+}
+
+void Demo::sfsWriteReadDemo(ScatteredFilesystem &fs, int index, unsigned size) {
+    int src[size];
+    int dst[size];
+
+    for (int i = 0; i < size; ++i) {
         src[i] = 2 * i;
     }
 
-    fs.write(index, (char *) src, 1000 * sizeof(int));
+    fs.write(index, (char *) src, size * sizeof(int));
     fs.close(index);
 
     std::cout << "**********************************" << std::endl;
@@ -154,28 +193,27 @@ void Demo::sfsDemo(ScatteredFilesystem &fs) {
               << std::endl;
 
     fs.printState();
-
     index = fs.open("/f0.txt");
-    fs.read(index, (char *) dst, 1000 * sizeof(int));
+    fs.read(index, (char *) dst, size * sizeof(int));
 
     std::cout << "**********************************" << std::endl;
     std::cout << "Contents previously written in file now successfully loaded into memory." << std::endl;
 
 
     std::cout << "-------------------" << std::endl;
-    for (int i = 0; i < 1000; ++i) {
+    for (int i = 0; i < size; ++i) {
         std::cout << dst[i] << ".";
     }
     std::cout << std::endl;
 
-    for (int i = 0; i < 1000; ++i) {
+    for (int i = 0; i < size; ++i) {
         src[i] = 3 * i;
     }
 
     fs.seek(index, 15 * sizeof(int));
     fs.write(index, (char *) src, 10 * sizeof(int));
     fs.seek(index, 0);
-    fs.read(index, (char *) dst, 100 * sizeof(int));
+    fs.read(index, (char *) dst, size * sizeof(int));
 
     std::cout << "**********************************" << std::endl;
     std::cout << "File pointer moved and new data written over part of file, then loaded into memory and displayed."
@@ -186,5 +224,4 @@ void Demo::sfsDemo(ScatteredFilesystem &fs) {
         std::cout << i << ".";
     }
     std::cout << std::endl;
-
 }

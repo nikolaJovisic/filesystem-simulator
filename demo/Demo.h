@@ -13,6 +13,10 @@ public:
     static void cfsDemo(ContinuousFilesystem &fs);
 
     static void sfsDemo(ScatteredFilesystem &fs);
+
+    static void sfsWriteReadDemo(ScatteredFilesystem &fs, int index, unsigned size);
+
+    static void cfsWriteReadDemo(ContinuousFilesystem &fs, int index);
 };
 
 

@@ -9,7 +9,7 @@
 using namespace std;
 
 void cfs() {
-    PersistentStorage psFormat(10000, 128);
+    PersistentStorage psFormat(10000, NUMBER_OF_BYTES_PER_BLOCK);
     PersistentStorageController::setDefaultPersistentStorage(&psFormat);
 
     ContinuousFilesystem cfsFormat(psFormat, ContinuousFilesystem::STANDARD_FORMAT);
@@ -22,7 +22,7 @@ void cfs() {
 }
 
 void sfs() {
-    PersistentStorage psFormat(10000, 128);
+    PersistentStorage psFormat(10000, NUMBER_OF_BYTES_PER_BLOCK);
     PersistentStorageController::setDefaultPersistentStorage(&psFormat);
 
     ScatteredFilesystem sfsFormat(psFormat, ScatteredFilesystem::STANDARD_FORMAT);
@@ -35,6 +35,7 @@ void sfs() {
 }
 
 int main() {
+    cfs();
     sfs();
 }
 
