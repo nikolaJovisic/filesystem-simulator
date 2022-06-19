@@ -7,12 +7,15 @@
 
 
 #include "ScatteredFileDescriptor.h"
+#include "IndirectionBlock.h"
 #include <ostream>
 
 class OpenedScatteredFileDescriptor : public ScatteredFileDescriptor {
 private:
     unsigned position;
 public:
+    IndirectionBlock indirectionBlock;
+
     explicit OpenedScatteredFileDescriptor(ScatteredFileDescriptor);
 
     [[nodiscard]] unsigned int getPosition() const;

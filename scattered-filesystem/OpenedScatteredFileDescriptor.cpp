@@ -4,8 +4,10 @@
 
 #include "OpenedScatteredFileDescriptor.h"
 
-OpenedScatteredFileDescriptor::OpenedScatteredFileDescriptor(ScatteredFileDescriptor fileDescriptor) : ScatteredFileDescriptor(fileDescriptor) {
+OpenedScatteredFileDescriptor::OpenedScatteredFileDescriptor(ScatteredFileDescriptor fileDescriptor)
+        : ScatteredFileDescriptor(fileDescriptor) {
     position = 0;
+    indirectionBlock.load(fileDescriptor.getBlock());
 }
 
 unsigned int OpenedScatteredFileDescriptor::getPosition() const {
