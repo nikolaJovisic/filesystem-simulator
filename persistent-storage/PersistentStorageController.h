@@ -8,9 +8,22 @@
 #include "PersistentStorage.h"
 
 class PersistentStorageController {
+private:
+    static PersistentStorage *persistentStorage;
 public:
-    static void write(PersistentStorage& persistentStorage, unsigned startingBlock, unsigned position, char *src, unsigned length);
-    static void read(PersistentStorage& persistentStorage, unsigned startingBlock, unsigned position, char *dst, unsigned length);
+    static void setDefaultPersistentStorage(PersistentStorage *persistentStorage);
+
+    static void
+    write(PersistentStorage &persistentStorage, unsigned startingBlock, unsigned position, char *src, unsigned length);
+
+    static void
+    read(PersistentStorage &persistentStorage, unsigned startingBlock, unsigned position, char *dst, unsigned length);
+
+    static void
+    write(unsigned startingBlock, unsigned position, char *src, unsigned length);
+
+    static void
+    read(unsigned startingBlock, unsigned position, char *dst, unsigned length);
 };
 
 

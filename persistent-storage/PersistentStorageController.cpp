@@ -5,8 +5,12 @@
 #include "PersistentStorageController.h"
 #include <cstring>
 
-void PersistentStorageController::write(PersistentStorage &persistentStorage, unsigned int startingBlock, unsigned position, char *src,
-                                        unsigned int length) {
+PersistentStorage *PersistentStorageController::persistentStorage = nullptr;
+
+void
+PersistentStorageController::write(PersistentStorage &persistentStorage, unsigned int startingBlock, unsigned position,
+                                   char *src,
+                                   unsigned int length) {
     if (length == 0) return;
 
     unsigned blockSize = persistentStorage.blockSize();
@@ -42,8 +46,10 @@ void PersistentStorageController::write(PersistentStorage &persistentStorage, un
     persistentStorage.write(lastBlock, tmp);
 }
 
-void PersistentStorageController::read(PersistentStorage &persistentStorage, unsigned int startingBlock, unsigned position, char *dst,
-                                       unsigned int length) {
+void
+PersistentStorageController::read(PersistentStorage &persistentStorage, unsigned int startingBlock, unsigned position,
+                                  char *dst,
+                                  unsigned int length) {
     if (length == 0) return;
 
     unsigned blockSize = persistentStorage.blockSize();
@@ -74,4 +80,21 @@ void PersistentStorageController::read(PersistentStorage &persistentStorage, uns
     //last block
     persistentStorage.read(lastBlock, tmp);
     std::memcpy(dst, tmp, processInLast);
+}
+
+
+void PersistentStorageController::setDefaultPersistentStorage(PersistentStorage *persistentStorage) {
+    PersistentStorageController::persistentStorage = persistentStorage;
+}
+
+void
+PersistentStorageController::write(unsigned int startingBlock, unsigned int position, char *src, unsigned int length) {
+    if (persistentStorage == nullptr) throw std::runtime_error("Default persistent storage not set!");
+    write(*persistentStorage, startingBlock, position, src, length);
+}
+
+void
+PersistentStorageController::read(unsigned int startingBlock, unsigned int position, char *dst, unsigned int length) {
+    if (persistentStorage == nullptr) throw std::runtime_error("Default persistent storage not set!");
+    read(*persistentStorage, startingBlock, position, dst, length);
 }
