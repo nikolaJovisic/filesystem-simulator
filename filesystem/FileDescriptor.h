@@ -12,10 +12,14 @@ class FileDescriptor {
 protected:
     bool deleted;
     bool directory;
+    unsigned usedSpace;
 
-    explicit FileDescriptor(bool directory);
+    explicit FileDescriptor(bool directory, unsigned usedSpace);
 
 public:
+    unsigned int getUsedSpace() const;
+
+    void setUsedSpace(unsigned int usedSpace);
 
     void markDeleted();
 
