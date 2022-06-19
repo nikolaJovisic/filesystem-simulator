@@ -29,7 +29,7 @@ private:
 
     void removeFromRecord(std::string &path, int index);
 
-    std::list<Slice> indirectionLevel1Slices(unsigned block, unsigned position, unsigned int size);
+    std::list<Slice> indirectionSlices(unsigned *blocks, unsigned position, unsigned int size);
 
     std::list<Slice> getSlices(OpenedScatteredFileDescriptor &descriptor, unsigned int size);
 
@@ -53,7 +53,7 @@ public:
 
     void close(unsigned int index) override;
 
-    void create(std::string path, bool isDirectory, unsigned int blocksReserved) override;
+    void create(std::string path, bool isDirectory, unsigned int blocksReserved = 0) override;
 
     void read(unsigned int index, char *dst, unsigned int size) override;
 
@@ -68,6 +68,9 @@ public:
     void printState() override;
 
     void expandFile(OpenedScatteredFileDescriptor &descriptor, unsigned int size);
+
+    void
+    expandIndirectionBlock(IndirectionBlock &indirectionBlock, unsigned int blocksUsed, unsigned int blocksRequired);
 };
 
 

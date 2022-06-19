@@ -7,7 +7,7 @@
 #include "../persistent-storage/PersistentStorageController.h"
 
 std::list<Slice>
-ScatteredFilesystem::indirectionLevel1Slices(unsigned block, unsigned position, unsigned int size) {
+ScatteredFilesystem::indirectionSlices(unsigned *blocks, unsigned position, unsigned int size) {
     if (size == 0) return {};
     unsigned blockSize = persistentStorage.blockSize();
     auto tableBlockSize = blockSize / sizeof(unsigned);
@@ -20,30 +20,27 @@ ScatteredFilesystem::indirectionLevel1Slices(unsigned block, unsigned position, 
     auto blockNumsToRead = dataExcedesThisBlock ? tableBlockSize - firstBlock : blocksToRead;
     auto bytesInLastBlock = blockSize - (blockSize * blocksToRead - size - position % blockSize);
 
-    unsigned blockNums[blockSize];
-    PersistentStorageController::read(persistentStorage, block, firstBlock * sizeof(unsigned), (char *) blockNums,
-                                      blockNumsToRead * sizeof(unsigned));
 
     std::list<Slice> retVal;
     if (blockNumsToRead == 1) {
         retVal.push_back(
-                {.block = blockNums[0], .start = startOffset, .length = dataExcedesThisBlock ? blockSize - startOffset
-                                                                                             : bytesInLastBlock});
+                {.block = blocks[0], .start = startOffset, .length = dataExcedesThisBlock ? blockSize - startOffset
+                                                                                          : bytesInLastBlock});
     } else {
-        retVal.push_back({.block = blockNums[0], .start = startOffset, .length = blockSize - startOffset});
+        retVal.push_back({.block = blocks[0], .start = startOffset, .length = blockSize - startOffset});
         for (int i = 1; i < blockNumsToRead - 1; ++i) {
-            retVal.push_back({.block = blockNums[i], .start = 0, .length = blockSize});
+            retVal.push_back({.block = blocks[i], .start = 0, .length = blockSize});
         }
         retVal.push_back(
-                {.block = blockNums[blockNumsToRead - 1], .start = 0, .length = dataExcedesThisBlock ? blockSize
-                                                                                                     : bytesInLastBlock});
+                {.block = blocks[blockNumsToRead - 1], .start = 0, .length = dataExcedesThisBlock ? blockSize
+                                                                                                  : bytesInLastBlock});
     }
     return retVal;
 }
 
 std::list<Slice> ScatteredFilesystem::getSlices(OpenedScatteredFileDescriptor &descriptor,
                                                 unsigned int size) {
-    return indirectionLevel1Slices(descriptor.getBlock(), descriptor.getPosition(), size);
+    return indirectionSlices(descriptor.indirectionBlock.blocks, descriptor.getPosition(), size);
 }
 
 int ScatteredFilesystem::open(std::string path) {
@@ -97,6 +94,7 @@ void ScatteredFilesystem::write(unsigned int index, char *src, unsigned int size
     writeRaw(descriptor, src, size);
     descriptor.setPosition(descriptor.getPosition() + size);
     descriptor.setSize(std::max(descriptor.getSize(), descriptor.getPosition()));
+    descriptor.indirectionBlock.save(descriptor.getBlock());
 }
 
 void ScatteredFilesystem::seek(unsigned int index, unsigned int position) {
@@ -123,12 +121,23 @@ void ScatteredFilesystem::remove(std::string path) {
 void ScatteredFilesystem::readRaw(OpenedScatteredFileDescriptor &descriptor, char *dst, unsigned int size) {
     if (descriptor.getPosition() + size > descriptor.getSize()) throw std::runtime_error("Reading out of bounds.");
     auto readSlices = getSlices(descriptor, size);
+    unsigned read = 0;
+    for (auto slice: readSlices) {
+        PersistentStorageController::read(slice.block, slice.start, dst + read, slice.length);
+        read += slice.length;
+    }
 }
 
 void ScatteredFilesystem::writeRaw(OpenedScatteredFileDescriptor &descriptor, char *src, unsigned int size) {
     if (descriptor.getPosition() + size > maxFilesize()) throw std::runtime_error("File size too large.");
     if (descriptor.getPosition() + size > descriptor.getSize()) {
         expandFile(descriptor, size);
+    }
+    auto writeSlices = getSlices(descriptor, size);
+    unsigned written = 0;
+    for (auto slice: writeSlices) {
+        PersistentStorageController::write(slice.block, slice.start, src + written, slice.length);
+        written += slice.length;
     }
 }
 
@@ -169,6 +178,7 @@ void ScatteredFilesystem::saveDirectory(Directory directory, unsigned directoryI
     OpenedScatteredFileDescriptor openedDescriptor(descriptor);
     writeRaw(openedDescriptor, directoryContent, directory.size());
 
+    openedDescriptor.indirectionBlock.save(descriptor.getBlock());
     descriptor.setSize(directory.size());
     descriptorManager.updateDescriptor(directoryIndex, descriptor);
 }
@@ -214,7 +224,23 @@ unsigned ScatteredFilesystem::maxFilesize() {
     return persistentStorage.blockSize() / sizeof(unsigned) * persistentStorage.blockSize();
 }
 
-void ScatteredFilesystem::expandFile(OpenedScatteredFileDescriptor &descriptor, unsigned int size) {
+void ScatteredFilesystem::expandFile(OpenedScatteredFileDescriptor &descriptor, unsigned int required) {
+    auto size = descriptor.getSize();
+    auto position = descriptor.getPosition();
+    auto available = size - position;
+    auto toExpand = required - available;
+    auto blocksUsed = (size + NUMBER_OF_BYTES_PER_BLOCK - 1) / NUMBER_OF_BYTES_PER_BLOCK;
+    auto blocksRequired = (toExpand + NUMBER_OF_BYTES_PER_BLOCK - 1) / NUMBER_OF_BYTES_PER_BLOCK;
+    expandIndirectionBlock(descriptor.indirectionBlock, blocksUsed, blocksRequired);
+    descriptor.setSize(size + toExpand);
+}
+
+void ScatteredFilesystem::expandIndirectionBlock(IndirectionBlock &indirectionBlock, unsigned int blocksUsed,
+                                                 unsigned int blocksRequired) {
+    for (int i = blocksUsed; i != blocksRequired; ++i) {
+        auto newBlock = occupationMap.occupy(1);
+        indirectionBlock.setBlock(i, newBlock);
+    }
 }
 
 

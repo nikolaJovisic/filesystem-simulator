@@ -13,7 +13,6 @@ class ContinuousFileDescriptor : public FileDescriptor {
 protected:
     unsigned startingBlock;
     unsigned blocksReserved;
-    unsigned usedSpace;
 
 public:
     ContinuousFileDescriptor(bool directory, unsigned startingBlock, unsigned blocksReserved, unsigned usedSpace);
@@ -22,17 +21,11 @@ public:
 
     [[nodiscard]] unsigned int getBlocksReserved() const;
 
-    [[nodiscard]] unsigned int getUsedSpace() const;
-
-    void setUsedSpace(unsigned int usedSpace);
-
     void setBlocksReserved(unsigned int blocksReserved);
 
     friend std::ostream &operator<<(std::ostream &os, const ContinuousFileDescriptor &descriptor);
 
 };
-
-
 
 
 #endif //FILESYSTEM_SIMULATOR_CONTINUOUSFILEDESCRIPTOR_H

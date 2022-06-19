@@ -4,7 +4,7 @@
 
 #include "ScatteredFileDescriptor.h"
 
-ScatteredFileDescriptor::ScatteredFileDescriptor(bool directory, unsigned block) : FileDescriptor(directory) {
+ScatteredFileDescriptor::ScatteredFileDescriptor(bool directory, unsigned block) : FileDescriptor(directory, 0) {
     size = 0;
     this->block = block;
 }
