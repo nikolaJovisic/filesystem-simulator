@@ -10,8 +10,10 @@ ScatteredFileDescriptor::ScatteredFileDescriptor(bool directory, unsigned block)
 }
 
 std::ostream &operator<<(std::ostream &os, const ScatteredFileDescriptor &descriptor) {
-    os << static_cast<const FileDescriptor &>(descriptor) << " block: " << descriptor.block << " size: "
-       << descriptor.size;
+    os << (descriptor.deleted ? " block (historically): " : " block: ") << descriptor.block;
+    if (!descriptor.deleted) os << " size: " << descriptor.size;
+    os << (descriptor.directory ? " - is a directory" : " - is not a directory")
+       << (descriptor.deleted ? " - is deleted" : "");
     return os;
 }
 
