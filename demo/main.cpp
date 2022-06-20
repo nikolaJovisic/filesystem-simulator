@@ -26,9 +26,9 @@ void sfs() {
     PersistentStorageController::setDefaultPersistentStorage(&psFormat);
 
     ScatteredFilesystem sfsFormat(psFormat, ScatteredFilesystem::STANDARD_FORMAT);
-    sfsFormat.serializeInFile("sfsDemo.cfs");
+    sfsFormat.serializeInFile("sfsDemo.sfs");
 
-    PersistentStorage psMount("sfsDemo.cfs");
+    PersistentStorage psMount("sfsDemo.sfs");
     ScatteredFilesystem sfsMount(psMount, ScatteredFilesystem::STANDARD_MOUNT);
 
     Demo::sfsDemo(sfsMount);
