@@ -35,7 +35,13 @@ void sfs() {
 }
 
 int main() {
+    std::cout << "###########################" << std::endl;
+    std::cout << "CONTINUOUS FILESYSTEM DEMO:" << std::endl;
+    std::cout << "###########################" << std::endl;
     cfs();
+    std::cout << "###########################" << std::endl;
+    std::cout << "SCATTERED FILESYSTEM DEMO:" << std::endl;
+    std::cout << "###########################" << std::endl;
     sfs();
 }
 
